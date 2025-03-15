@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+}
+
+.navbar {
+  background: #0077b6;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.hero {
+  text-align: center;
+  padding: 50px;
+  background: #90e0ef;
+}
+
+.footer {
+  background: #0077b6;
+  text-align: center;
+  padding: 15px;
+  color: white;
+}
