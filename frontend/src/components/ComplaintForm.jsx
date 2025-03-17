@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext"; // Import AuthContext hook
+import "./ComplaintForm.css";
 
 const ComplaintForm = () => {
+  const { user } = useAuth(); // Get logged-in user info
   const [complaint, setComplaint] = useState({
     location: "",
     description: "",
@@ -10,14 +13,13 @@ const ComplaintForm = () => {
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
   const [loading, setLoading] = useState(false);
 
-  // Function to get user's location
+  // Get user's geolocation
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-
           setCoordinates({ lat, lon });
           setComplaint((prev) => ({
             ...prev,
@@ -26,39 +28,34 @@ const ComplaintForm = () => {
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert("Please enable location access to proceed.");
+          alert("Please enable location access.");
         }
       );
-    } else {
-      alert("Geolocation is not supported by your browser.");
     }
   }, []);
 
-  // Handle file input
   const handleFileChange = (e) => {
     setComplaint({ ...complaint, file: e.target.files[0] });
   };
 
-  // Handle text input
   const handleChange = (e) => {
     setComplaint({ ...complaint, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!complaint.file) {
-      alert("Please upload an image or video as proof.");
+      alert("Please upload an image or video.");
       return;
     }
 
     setLoading(true);
-    
+
     const formData = new FormData();
     formData.append("location", complaint.location);
     formData.append("description", complaint.description);
     formData.append("file", complaint.file);
+    formData.append("user", user?.email); // ✅ Pass user email or ID here
 
     try {
       const response = await fetch("http://localhost:5000/api/complaints/register", {
@@ -67,18 +64,13 @@ const ComplaintForm = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log("Complaint Registered:", data);
         alert("Complaint submitted successfully!");
         setComplaint({ location: complaint.location, description: "", file: null });
       } else {
-        const errorData = await response.json();
-        console.error("Failed to register complaint:", errorData);
-        alert("Error submitting complaint: " + (errorData.error || "Unknown error"));
+        alert("Failed to submit complaint.");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while submitting the complaint.");
+      alert("An error occurred while submitting.");
     } finally {
       setLoading(false);
     }
@@ -86,30 +78,37 @@ const ComplaintForm = () => {
 
   return (
     <div className="complaint-form-container">
-      <h2>📢 Register a Water Wastage Complaint</h2>
       <form onSubmit={handleSubmit} className="complaint-form">
-        
-        {/* Location (Autofilled) */}
-        <label>📍 Your Location (Auto-detected)</label>
-        <input type="text" name="location" value={complaint.location} readOnly required />
+        {/* Issue Type */}
+        <label>Issue Type:</label>
+        <select name="description" value={complaint.description} onChange={handleChange} required>
+          <option value="">Select Issue Type</option>
+          <option value="Leakage">Leakage</option>
+          <option value="Overflow">Overflow</option>
+          <option value="Contamination">Contamination</option>
+          <option value="Other">Other</option>
+        </select>
 
-        {/* Description */}
-        <label>✍️ Describe the Issue</label>
-        <textarea
-          name="description"
-          placeholder="Briefly explain the water wastage issue..."
-          onChange={handleChange}
-          value={complaint.description}
+        {/* Location */}
+        <label>Specific Location:</label>
+        <input
+          type="text"
+          name="location"
+          value={complaint.location}
+          placeholder="Auto-detected location"
+          readOnly
           required
         />
 
         {/* File Upload */}
-        <label>📸 Upload an Image/Video</label>
-        <input type="file" accept="image/*,video/*" onChange={handleFileChange} required />
+        <label>Upload relevant images (Optional):</label>
+        <div className="upload-container">
+          <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
+        </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button type="submit" disabled={loading}>
-          {loading ? "Submitting..." : "Submit Complaint"}
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>

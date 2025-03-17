@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./Auth.css"; // Import the same Auth CSS as Signin
 
 const Signup = () => {
-  const { setUserRole } = useAuth();
+  const { login } = useAuth();
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -29,7 +30,7 @@ const Signup = () => {
 
     const data = await response.json();
     if (response.ok) {
-      setUserRole(formData.role);
+      login(formData.role);
       navigate("/signin"); // Redirect to Signin after signup
     } else {
       alert(data.message);
@@ -88,7 +89,9 @@ const Signup = () => {
             <select name="role" value={formData.role} onChange={handleChange}>
               <option value="user">Regular User</option>
               <option value="municipal">Municipal Corporation</option>
+              <option value="ngo">NGO Representative</option>
             </select>
+
           </div>
 
           <button type="submit" className="auth-btn">Sign Up</button>

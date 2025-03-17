@@ -11,17 +11,20 @@
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("user"); // Default role: user
-
+//handling routes 
     const handleSubmit = (e) => {
       e.preventDefault();
       login(email, role);
-
+    
       if (role === "municipal") {
-        navigate("/municipal-dashboard"); // Redirect municipal users
+        navigate("/municipal-dashboard");
+      } else if (role === "ngo") {
+        navigate("/ngo-dashboard");
       } else {
-        navigate("/dashboard"); // Redirect normal users
+        navigate("/");
       }
     };
+    
 
     return (
       <div className="auth-page">
@@ -48,6 +51,7 @@
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="user">Regular User</option>
               <option value="municipal">Municipal Authority</option>
+              <option value="ngo">NGO Representative</option>
             </select>
 
             <button type="submit" className="auth-btn">Sign In</button>

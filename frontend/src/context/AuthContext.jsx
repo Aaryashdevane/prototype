@@ -1,28 +1,55 @@
-    import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
-    const AuthContext = createContext();
+// Create context
+export const AuthContext = createContext();
 
-    export const useAuth = () => useContext(AuthContext);
+// Hook to use context easily
+export const useAuth = () => useContext(AuthContext);
 
-    export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
-    // Simulated login function
-    const login = (email, role) => {
-        const userData = { email, role };
-        localStorage.setItem("user", JSON.stringify(userData));
-        setUser(userData);
-    };
+  // 🟢 1. Load user from localStorage on mount
+  useEffect(() => {
+    const legacyPersist = localStorage.getItem("persist:root");
+    if (legacyPersist) {
+      localStorage.removeItem("persist:root"); // Remove Redux-Persist leftover
+    }
+  
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+   useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
 
-    // Check if user is logged in on page load
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (storedUser) setUser(storedUser);
-    }, []);
+  // 🟢 2. Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }, [user]);
 
-    return (
-        <AuthContext.Provider value={{ user, login }}>
-        {children}
-        </AuthContext.Provider>
-    );
-    };
+  // 🟢 3. Login function
+  const login = (email, role) => {
+    const userData = { email, role };
+    setUser(userData);
+  };
+
+  // 🟢 4. Logout function (optional)
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

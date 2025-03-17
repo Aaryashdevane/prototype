@@ -1,0 +1,25 @@
+.status-tracker {
+    text-align: center;
+  }
+  
+  .complaint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  /* Complaint card styles */
+  .complaint-card {
+    background: #f1f5f9;
+    border: 1px solid #e5e7eb;
+    padding: 15px 20px;
+    border-radius: 8px;
+    text-align: left;
+  }
+  
+  .complaint-card p {
+    margin: 5px 0;
+    color: #1f2937;
+  }
+  

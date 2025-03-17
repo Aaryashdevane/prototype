@@ -10,6 +10,7 @@ import ConservationTechniques from "./pages/ConservationTechniques.jsx";
 import MunicipalDashboard from "./pages/MunicipalDashboard.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 // import AuthContext from "./context/AuthContext.jsx"
+import NgoDashboard from "./pages/NgoDashboard.jsx";
 
 const App = () => {
   return (
@@ -21,16 +22,25 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/register-complaint" element={<RegisterComplaint />} />
         {/* {<Route path="/report-complaint" element={<ReportComplaint />} /> */}
-        <Route path="/techniques" element={<ConservationTechniques />} /> 
-        <Route 
-            path="/municipal-dashboard" 
-            element={
-              <ProtectedRoute roleRequired="municipal">
-                <MunicipalDashboard />
-              </ProtectedRoute>
-            } 
-          />
-       
+        <Route path="/techniques" element={<ConservationTechniques />} />
+        <Route
+          path="/municipal-dashboard"
+          element={
+            <ProtectedRoute roleRequired="municipal">
+              <MunicipalDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ngo-dashboard"
+          element={
+            <ProtectedRoute roleRequired="ngo">
+              <NgoDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+
       </Routes>
     </>
   );

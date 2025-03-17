@@ -1,14 +1,24 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import { useAuth } from "../context/AuthContext"; // ✅ Correct import
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user, login } = useAuth(); // ✅ Using the hook
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.reload(); // simple reload for logout
+  };
 
   return (
     <nav className="navbar">
       <div className="nav-container">
         <h1 className="logo">💧 WaterSave</h1>
+
         <div className={`nav-links ${isOpen ? "open" : ""}`}>
           <Link to="/">Home</Link>
           <Link to="/techniques">Conservation Techniques</Link>
@@ -17,8 +27,27 @@ const Navbar = () => {
         </div>
 
         <div className="auth-buttons">
-          <Link to="/signin" className="btn-login">Sign In</Link>
-          <Link to="/signup" className="btn-signup">Sign Up</Link>
+          {user ? (
+            <div className="profile-container">
+              <img
+                src="/src/assets/images/profile-icon.png"
+                alt="Profile"
+                className="profile-icon"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              />
+              {dropdownOpen && (
+                <div className="dropdown-menu">
+                  <button onClick={() => navigate("/profile")}>Profile</button>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link to="/signin" className="btn-login">Sign In</Link>
+              <Link to="/signup" className="btn-signup">Sign Up</Link>
+            </>
+          )}
         </div>
 
         <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>☰</button>

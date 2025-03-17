@@ -15,4 +15,13 @@ router.get("/municipal-dashboard", protect, municipalOnly, (req, res) => {
   res.json({ message: "Welcome to the Municipal Dashboard" });
 });
 
+// Example protected NGO route
+router.get("/ngo-dashboard", protect, (req, res) => {
+  if (req.user.role !== "ngo") {
+    return res.status(403).json({ message: "Access Denied" });
+  }
+  res.json({ message: "Welcome to the NGO Dashboard" });
+});
+
+  
 module.exports = router;
