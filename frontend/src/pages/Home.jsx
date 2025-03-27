@@ -4,7 +4,7 @@ import "./Home.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
-import waterVideo from "../assets/videos/water-video.mp4"; // Importing video
+import waterDrop from "../assets/images/water-drop.png"; // Importing video
 
 
 const Home = () => {
@@ -15,7 +15,7 @@ const Home = () => {
       {/* Hero Section with Video */}
       <section className="hero">
         <video autoPlay loop muted className="hero-video">
-          <source src={waterVideo} type="video/mp4" />
+          <source src={waterDrop} type="video/mp4" />
         </video>
         <motion.div 
           className="hero-content"
