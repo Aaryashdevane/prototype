@@ -1,0 +1,55 @@
+.subsidy-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .subsidy-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .subsidy-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .subsidy-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .subsidy-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .subsidy-card h2 {
+    font-size: 1.5rem;
+    color: #34495e;
+  }
+  
+  .subsidy-card p {
+    color: #7f8c8d;
+  }
+  
+  .learn-more {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .learn-more:hover {
+    background: #2980b9;
+  }
+  
