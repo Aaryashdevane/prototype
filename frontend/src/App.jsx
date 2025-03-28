@@ -12,6 +12,7 @@ import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 // import AuthContext from "./context/AuthContext.jsx"
 import NgoDashboard from "./pages/NgoDashboard.jsx";
 import SubsidyPage from "./pages/Subsidy.jsx";
+import Footer from "./components/Footer.jsx";
 
 
 const App = () => {
@@ -42,9 +43,10 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
-
       </Routes>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 };
