@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .home {
     font-family: "Poppins", sans-serif;
     color: white;
@@ -15,26 +21,23 @@
   }
   
   .hero-image {
+    position: absolute; /* Make the image fill the entire section */
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image covers the entire section */
-    position: absolute;
     top: 0;
     left: 0;
-    z-index: -1; 
+    z-index: 0; /* Place the image behind the content */
   }
 
   .hero-image img {
     width: 100%;
     height: 100%;
     object-fit: cover; /* Ensures the image covers the entire section */
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1; /* Places the image behind the content */
   }
   
   .hero-content {
+    position: relative; /* Ensure content is positioned over the image */
+    z-index: 1; /* Place the content above the image */
     text-align: center;
     color: #ffffff; /* White text for contrast */
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Adds readability over the image */
