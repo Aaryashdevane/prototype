@@ -27,7 +27,7 @@ const Home = () => {
           <p>Join our mission to conserve water and prevent wastage.</p>
           <div className="hero-buttons">
             <motion.button whileHover={{ scale: 1.1 }} className="btn-primary">Learn More</motion.button>
-            <motion.button whileHover={{ scale: 1.1 }} className="btn-outline">Report Wastage</motion.button>
+            <motion.button whileHover={{ scale: 1.1 }} className="btn-primary">Report Wastage</motion.button>
           </div>
         </motion.div>
       </section>
