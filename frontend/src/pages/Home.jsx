@@ -1,8 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import "./Home.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
 // import waterDrop from "HomePage.jpg"; 
 
@@ -10,13 +8,17 @@ import Testimonials from "../components/Testimonials";
 const Home = () => {
   return (
     <div className="home">
-      <Navbar />
 
       {/* Hero Section with Video */}
       <section className="hero">
-        <div className="hero-image">
+        <motion.div
+          className="hero-image"
+          initial={{ opacity: 0, y: 10 }} /* Changed y: 50 to y: 0 */
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 2 }}
+        >
           <img src="HomePage.jpg" alt="Hero Background" />
-        </div>
+        </motion.div>
         <motion.div
           className="hero-content"
           initial={{ opacity: 0, y: 50 }}
@@ -34,9 +36,6 @@ const Home = () => {
 
       {/* Testimonials */}
       <Testimonials />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };
