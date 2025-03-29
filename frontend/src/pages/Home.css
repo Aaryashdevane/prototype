@@ -15,49 +15,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  /* Full viewport height */
+  height: 100vh; /* Full viewport height */
   overflow: hidden;
-  background-color: #f0f8ff;
-  /* Light background color */
+  background: url("HomePage.jpg") no-repeat center center fixed; /* Parallax background */
+  background-size: cover;
+  /* Ensures the image covers the entire section */
+  z-index: 0;
 }
 
 .hero-image {
   position: absolute;
-  /* Make the image fill the entire section */
   width: 100%;
   height: 100%;
-  top: 0px;
+  top: 0;
   left: 0;
-  z-index: 0;
-  /* Place the image behind the content */
-}
-
-.hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Ensures the image covers the entire section */
-}
-
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-  .hero-image img {
-    content: url("/MobileHomePage.jpg");
-    /* Use the mobile-specific image */
-  }
+  z-index: -1; /* Place the image behind the content */
+  background-attachment: fixed; /* Parallax effect */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .hero-content {
   position: relative;
-  /* Ensure content is positioned over the image */
-  z-index: 1;
-  /* Place the content above the image */
+  z-index: 1; /* Place the content above the background */
   text-align: center;
-  color: #ffffff;
-  /* White text for contrast */
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-  /* Adds readability over the image */
+  color: #ffffff; /* White text for contrast */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Adds readability over the image */
   padding: 1rem;
 }
 
@@ -80,54 +64,22 @@
 }
 
 .hero-buttons .btn-primary {
-  background-color: #007bff;
-  /* Primary blue color */
+  background-color: #007bff; /* Primary blue color */
   color: #fff;
   padding: 0.8rem 2rem;
   border: none;
-  border-radius: 8px;
-  /* Slightly rounded corners */
+  border-radius: 8px; /* Slightly rounded corners */
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* Subtle shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .hero-buttons .btn-primary:hover {
-  background-color: #0056b3;
-  /* Darker blue on hover */
-  transform: translateY(-3px);
-  /* Lift effect on hover */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-  /* Stronger shadow on hover */
-}
-
-.hero-buttons .btn-outline {
-  background-color: transparent;
-  color: #007bff;
-  /* Primary blue color */
-  padding: 0.8rem 2rem;
-  border: 2px solid #007bff;
-  /* Blue border */
-  border-radius: 8px;
-  /* Slightly rounded corners */
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-.hero-buttons .btn-outline:hover {
-  border-color: #0056b3;
-  /* Darker blue border on hover */
-  color: #0056b3;
-  /* Darker blue text on hover */
-  transform: translateY(-3px);
-  /* Lift effect on hover */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-  /* Stronger shadow on hover */
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: translateY(-3px); /* Lift effect on hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
 
 /* Responsive Design */
