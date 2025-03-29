@@ -8,6 +8,15 @@ const Home = () => {
     <div className="home">
       {/* Hero Section with Parallax Effect */}
       <section className="hero">
+        {/* Motion for the background image */}
+        <motion.div
+          className="hero-image"
+          initial={{ opacity: 0, y: 20 }} // Start slightly above and invisible
+          animate={{ opacity: 1, y: 0 }} // Fade in and slide into place
+          transition={{ duration: 1.5 }}
+        ></motion.div>
+
+        {/* Motion for the text content */}
         <motion.div
           className="hero-content"
           initial={{ opacity: 0, y: 50 }}

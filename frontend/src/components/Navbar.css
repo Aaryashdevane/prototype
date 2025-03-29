@@ -155,7 +155,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 970px) {
   .nav-links {
     display: none;
   }
@@ -168,3 +168,5 @@
     display: none;
   }
 }
+
+
