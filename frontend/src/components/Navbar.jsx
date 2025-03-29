@@ -17,7 +17,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <h1 className="logo">💧 WaterSave</h1>
+        <Link to={"/"} className="logo">💧 WaterSave</Link>
 
         <div className={`nav-links ${isOpen ? "open" : ""}`}>
           <Link to="/">Home</Link>
