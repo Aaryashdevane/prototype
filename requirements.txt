@@ -6,3 +6,5 @@ cloudinary
 Pillow
 google-generativeai
 requests
+bson
+io
