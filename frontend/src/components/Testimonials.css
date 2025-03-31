@@ -109,8 +109,10 @@
   }
 
   .testimonial-card {
+
     width: 100%; /* Full width for single testimonial */
     margin: 0 auto;
+
   }
 
   .nav-button {

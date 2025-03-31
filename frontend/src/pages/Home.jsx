@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import "./Home.css";
 import Testimonials from "../components/Testimonials";
 
+
 const Home = () => {
   return (
     <div className="home">
@@ -17,6 +18,7 @@ const Home = () => {
         ></motion.div>
 
         {/* Motion for the text content */}
+
         <motion.div
           className="hero-content"
           initial={{ opacity: 0, y: 50 }}
@@ -29,13 +31,15 @@ const Home = () => {
             <motion.button whileHover={{ scale: 1.1 }} className="btn-primary">
               Learn More
             </motion.button>
+
             <motion.button whileHover={{ scale: 1.1 }} className="btn-primary">
+
               Report Wastage
             </motion.button>
           </div>
         </motion.div>
       </section>
-
+<Scheme/>
       {/* Testimonials */}
       <Testimonials />
     </div>

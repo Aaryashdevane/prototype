@@ -1,5 +1,6 @@
 /* General Navbar Styles */
 .navbar {
+
   background-color: #007bff; /* Primary blue background */
   color: white;
   padding: 1rem 2rem;
@@ -10,6 +11,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+
 }
 
 .nav-container {
@@ -17,10 +19,12 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
 }
 
 .logo {
   font-size: 1.8rem;
+
   font-weight: bold;
   color: white;
   text-decoration: none;
@@ -32,11 +36,13 @@
   gap: 1.5rem;
   list-style: none;
   transition: transform 0.3s ease;
+
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
+
   font-size: 1rem;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -50,10 +56,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+
 }
 
 .btn-login,
 .btn-signup {
+
   padding: 0.5rem 1rem;
   border-radius: 5px;
   font-size: 0.9rem;
