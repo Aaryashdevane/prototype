@@ -11,6 +11,9 @@ import MunicipalDashboard from "./pages/MunicipalDashboard.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 // import AuthContext from "./context/AuthContext.jsx"
 import NgoDashboard from "./pages/NgoDashboard.jsx";
+import SubsidyPage from "./pages/Subsidy.jsx";
+import Footer from "./components/Footer.jsx";
+
 
 const App = () => {
   return (
@@ -23,6 +26,7 @@ const App = () => {
         <Route path="/register-complaint" element={<RegisterComplaint />} />
         {/* {<Route path="/report-complaint" element={<ReportComplaint />} /> */}
         <Route path="/techniques" element={<ConservationTechniques />} />
+        <Route path="/subsidy" element={<SubsidyPage/>} />
         <Route
           path="/municipal-dashboard"
           element={
@@ -39,9 +43,10 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
-
       </Routes>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 };
