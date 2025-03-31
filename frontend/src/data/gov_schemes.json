@@ -1,0 +1,19 @@
+[
+    {
+      "id": 1,
+      "name": "Jal Jeevan Mission",
+      "objective": "Provide safe and adequate drinking water through individual household tap connections by 2024 to all households in rural India.",
+      "benefits": ["Access to clean drinking water", "Promotes water conservation", "Boosts rural infrastructure"],
+      "eligibility": "Rural households across India",
+      "link": "https://jaljeevanmission.gov.in"
+    },
+    {
+      "id": 2,
+      "name": "PM Krishi Sinchayee Yojana (PMKSY)",
+      "objective": "Achieve convergence of investments in irrigation at the field level, enhance physical access to water, and improve water use efficiency.",
+      "benefits": ["Increases irrigation potential", "Boosts water productivity", "Supports micro-irrigation"],
+      "eligibility": "Farmers and agri-based communities",
+      "link": "https://pmksy.gov.in"
+    }
+  ]
+  

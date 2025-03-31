@@ -1,0 +1,191 @@
+/* Main container */
+.scheme-slider {
+    background: linear-gradient(to right, #92c7f0, #1c1c1c);
+    padding: 40px 0;
+}
+
+/* Slider wrapper */
+.gov-scheme-slider {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Flexbox container for slides */
+.gov-scheme-slider-container {
+    display: flex;
+    width: 100%;
+    height: 400px;
+    position: relative;
+}
+
+/* Each slide */
+.gov-scheme-slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+    display: flex;
+}
+
+/* Slide layout */
+.gov-scheme-slide-content {
+    display: flex;
+    flex: 1;
+    background: linear-gradient(to right, #aacef2, #e9ecef);
+    border-radius: 12px;
+}
+
+/* Left image block */
+.gov-scheme-slide-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    padding: 20px;
+}
+
+.gov-scheme-slide-image img {
+    width: 90%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* Right content block */
+.gov-scheme-slide-info {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gov-scheme-slide-info h2 {
+    color: #17479e;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.gov-scheme-slide-info p {
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* CTA button */
+.gov-scheme-learn-more {
+    padding: 12px 24px;
+    background-color: #17479e;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+    width: fit-content;
+}
+
+.gov-scheme-learn-more:hover {
+    background-color: #0f316d;
+}
+
+/* Controls (arrows + dots) */
+.gov-scheme-slider-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.gov-scheme-slider-arrow {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: background-color 0.3s;
+}
+
+.gov-scheme-slider-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.gov-scheme-slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.gov-scheme-slider-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.gov-scheme-slider-dot.active {
+    background-color: #ff6b35;
+}
+
+/* Autoplay toggle */
+.gov-scheme-autoplay-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.gov-scheme-autoplay-toggle.active {
+    color: #ff6b35;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .gov-scheme-slide-content {
+        flex-direction: column;
+    }
+
+    .gov-scheme-slide-image,
+    .gov-scheme-slide-info {
+        width: 100%;
+        height: auto;
+    }
+
+    .gov-scheme-slide-info {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .gov-scheme-slide-info h2 {
+        font-size: 1.5rem;
+    }
+
+    .gov-scheme-slide-info p {
+        font-size: 0.95rem;
+    }
+
+    .gov-scheme-slider-container {
+        height: auto;
+    }
+
+    .gov-scheme-slider-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+}

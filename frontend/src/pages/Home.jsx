@@ -4,20 +4,18 @@ import "./Home.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
-import waterVideo from "../assets/videos/water-video.mp4"; // Importing video
-
-
+import heroImage from "../assets/images/image.png" // Using JPEG image
+import Scheme from "../components/Scheme";
 const Home = () => {
   return (
     <div className="home">
       <Navbar />
 
-      {/* Hero Section with Video */}
+      {/* Hero Section with Background Image */}
       <section className="hero">
-        <video autoPlay loop muted className="hero-video">
-          <source src={waterVideo} type="video/mp4" />
-        </video>
-        <motion.div 
+        <img src={heroImage} alt="Hero Background" className="hero-image" />
+
+        <motion.div
           className="hero-content"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -26,12 +24,16 @@ const Home = () => {
           <h1>Save Every Drop, Secure the Future</h1>
           <p>Join our mission to conserve water and prevent wastage.</p>
           <div className="hero-buttons">
-            <motion.button whileHover={{ scale: 1.1 }} className="btn-primary">Learn More</motion.button>
-            <motion.button whileHover={{ scale: 1.1 }} className="btn-outline">Report Wastage</motion.button>
+            <motion.button whileHover={{ scale: 1.1 }} className="btn-primary">
+              Learn More
+            </motion.button>
+            <motion.button whileHover={{ scale: 1.1 }} className="btn-outline">
+              Report Wastage
+            </motion.button>
           </div>
         </motion.div>
       </section>
-
+<Scheme/>
       {/* Testimonials */}
       <Testimonials />
 

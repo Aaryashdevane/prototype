@@ -1,0 +1,21 @@
+[
+    {
+      "id": 1,
+      "name": "Atal Bhujal Yojana",
+      "region": "Gujarat, Haryana, Karnataka, Madhya Pradesh, Maharashtra, Rajasthan, Uttar Pradesh",
+      "goal": "Promote sustainable groundwater management involving community participation.",
+      "budget": "₹6,000 crore",
+      "status": "Ongoing",
+      "link": "https://jalshakti-dowr.gov.in/atal-bhujal-yojana"
+    },
+    {
+      "id": 2,
+      "name": "Namami Gange Programme",
+      "region": "Uttarakhand, Uttar Pradesh, Bihar, Jharkhand, West Bengal",
+      "goal": "Rejuvenation of the River Ganga and its tributaries through pollution abatement and conservation measures.",
+      "budget": "₹20,000 crore",
+      "status": "Ongoing",
+      "link": "https://nmcg.nic.in/"
+    }
+  ]
+  

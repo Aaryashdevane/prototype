@@ -1,64 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./ConservationTechniques.css";
+
+import techniquesData from "../data/techniques_full.json";
+import gov_schemes from "../data/gov_schemes.json";
+import gov_projects from "../data/gov_projects.json";
 
 const ConservationTechniques = () => {
   const [selectedTechnique, setSelectedTechnique] = useState(null);
-  const [filterType, setFilterType] = useState(""); // Project or Conservation Technique
-  const [filterCategory, setFilterCategory] = useState(""); // Agriculture, Home, etc.
   const [searchQuery, setSearchQuery] = useState("");
+  const [socialPosts, setSocialPosts] = useState([]);
 
-  const techniquesData = [
-    { id: 1, name: "Rainwater Harvesting", category: "Home", type: "Conservation Technique", description: "Rainwater harvesting collects and stores rainwater for later use, reducing reliance on municipal supply. It involves rooftop catchment systems, storage tanks, and underground recharge pits. This technique is widely used for irrigation, toilet flushing, and even drinking water after filtration.", image: "/images/rainwater-harvesting.jpg" },
-    { id: 2, name: "Drip Irrigation", category: "Agriculture", type: "Conservation Technique", description: "Drip irrigation is an efficient watering system that delivers water directly to plant roots. It reduces evaporation, minimizes water runoff, and saves up to 70% more water than traditional irrigation methods. Farmers widely adopt this in dry regions to maximize crop yield.", image: "/images/drip-irrigation.jpg" },
-    { id: 3, name: "Smart Irrigation Systems", category: "Agriculture", type: "Project", description: "Smart irrigation uses soil moisture sensors and weather data to automate watering schedules, ensuring optimal water use while maximizing crop yield.", image: "/images/smart-irrigation.jpg" },
-    { id: 4, name: "Desalination Plants", category: "Industry", type: "Project", description: "Desalination plants remove salt and impurities from seawater to produce drinking water. These facilities are crucial in water-scarce regions with limited freshwater sources.", image: "/images/desalination.jpg" },
-    { id: 5, name: "Artificial Wetlands", category: "Environment", type: "Project", description: "Artificial wetlands are engineered systems that mimic natural wetlands to filter and purify wastewater, removing pollutants through biological and chemical processes.", image: "/images/artificial-wetlands.jpg" },
-    { id: 6, name: "Leak Detection Systems", category: "Home", type: "Conservation Technique", description: "Smart leak detection systems use sensors to monitor and detect water leaks in pipelines. Alerts are sent via mobile apps, allowing quick action to prevent water wastage.", image: "/images/leak-detection.jpg" },
-    { id: 7, name: "Greywater Recycling", category: "Home", type: "Conservation Technique", description: "Greywater recycling reuses wastewater from sinks, showers, and laundry for irrigation or toilet flushing. It significantly reduces freshwater demand and helps in sustainable water management.", image: "/images/greywater-recycling.jpg" },
-    { id: 8, name: "Fog Harvesting", category: "Environment", type: "Project", description: "Fog harvesting captures water droplets from fog using mesh nets. This technique is particularly useful in arid and coastal areas to generate fresh water.", image: "/images/fog-harvesting.jpg" },
-    { id: 9, name: "Mulching", category: "Agriculture", type: "Conservation Technique", description: "Mulching involves covering the soil with organic materials like leaves, straw, or wood chips to retain moisture, prevent weed growth, and enhance soil fertility.", image: "/images/mulching.jpg" },
-    { id: 10, name: "Low-Flow Showerheads", category: "Home", type: "Conservation Technique", description: "Low-flow showerheads reduce water flow while maintaining strong pressure, saving up to 50% of water compared to traditional showerheads. These devices are cost-effective and easy to install, helping households conserve significant amounts of water.", image: "/images/low-flow-showerhead.jpg" },
-    // Add 40 more techniques & projects here...
-  ];
+  // Fetch posts from backend
+  useEffect(() => {
+    axios.get("http://localhost:8000/posts") // Ensure FastAPI is running
+      .then((response) => {
+        setSocialPosts(response.data);  // ✅ FIXED: API returns a list directly
+      })
+      .catch((error) => {
+        console.error("❌ Error fetching posts:", error);
+      });
+  }, []);
 
-  // Filtering the data based on selected filters
-  const filteredTechniques = techniquesData.filter((tech) => {
-    return (
-      (filterType === "" || tech.type === filterType) &&
-      (filterCategory === "" || tech.category === filterCategory) &&
-      tech.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
+  // Filter for conservation techniques
+  const filteredTechniques = techniquesData.filter((tech) =>
+    tech.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="techniques-container">
-      <h2>Water Conservation Techniques & Projects</h2>
+      <h2>Water Conservation Hub 🌍</h2>
 
-      {/* Search & Filter Section */}
+      {/* Search Section */}
       <div className="filter-container">
         <input
           type="text"
-          placeholder="🔍 Search techniques or projects..."
+          placeholder="🔍 Search techniques..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
-        <select onChange={(e) => setFilterType(e.target.value)} value={filterType}>
-          <option value="">All Types</option>
-          <option value="Project">Projects</option>
-          <option value="Conservation Technique">Conservation Techniques</option>
-        </select>
-
-        <select onChange={(e) => setFilterCategory(e.target.value)} value={filterCategory}>
-          <option value="">All Sectors</option>
-          <option value="Home">Home</option>
-          <option value="Agriculture">Agriculture</option>
-          <option value="Industry">Industry</option>
-          <option value="Environment">Environment</option>
-        </select>
       </div>
 
-      {/* Display Techniques */}
+      {/* Conservation Techniques */}
+      <h3>🔧 Conservation Techniques</h3>
       <div className="techniques-grid">
         {filteredTechniques.map((technique) => (
           <div
@@ -67,22 +51,92 @@ const ConservationTechniques = () => {
             onClick={() => setSelectedTechnique(technique)}
           >
             <img src={technique.image} alt={technique.name} />
-            <h3>{technique.name}</h3>
-            <p>{technique.description.substring(0, 100)}...</p>
+            <h4>{technique.name}</h4>
+            <p>{technique.purpose}</p>
           </div>
         ))}
       </div>
 
-      {/* Modal for Full Details */}
+      {/* Modal for Technique Details */}
       {selectedTechnique && (
         <div className="technique-modal">
           <div className="modal-content">
             <h2>{selectedTechnique.name}</h2>
             <p>{selectedTechnique.description}</p>
+            <h4>Benefits:</h4>
+            <ul>
+              {selectedTechnique.benefits.map((benefit, index) => (
+                <li key={index}>{benefit}</li>
+              ))}
+            </ul>
+            <h4>Associated NGO:</h4>
+            <p>{selectedTechnique.ngo}</p>
             <button onClick={() => setSelectedTechnique(null)}>Close</button>
           </div>
         </div>
       )}
+
+      {/* Social Media Techniques */}
+      <h3>🌐 Techniques from Social Media</h3>
+      <div className="social-grid">
+        {socialPosts.length > 0 ? (
+          socialPosts.map((post, index) => (
+            <div key={index} className="social-card">
+              {post.type === "image" && post.media && (
+                <img src={`/${post.media}`} alt={post.title} />
+              )}
+              {post.type === "video" && post.url.includes("youtube") && (
+                <iframe
+                  width="100%"
+                  height="200"
+                  src={post.url.replace("watch?v=", "embed/")}
+                  title={post.title}
+                  frameBorder="0"
+                  allowFullScreen
+                ></iframe>
+              )}
+              <h4>{post.title}</h4>
+              <p><strong>Source:</strong> {post.source}</p>
+              <a href={post.url} target="_blank" rel="noopener noreferrer">View Source</a>
+            </div>
+          ))
+        ) : (
+          <p>No social media posts found.</p>
+        )}
+      </div>
+
+      {/* Government Schemes */}
+      <h3>🏛️ Government Schemes</h3>
+      <div className="gov-section">
+        {gov_schemes.map((scheme) => (
+          <div key={scheme.id} className="gov-card">
+            <h4>{scheme.name}</h4>
+            <p>{scheme.objective}</p>
+            <ul>
+              {scheme.benefits.map((benefit, index) => (
+                <li key={index}>{benefit}</li>
+              ))}
+            </ul>
+            <p><strong>Eligibility:</strong> {scheme.eligibility}</p>
+            <a href={scheme.link} target="_blank" rel="noopener noreferrer">More Info</a>
+          </div>
+        ))}
+      </div>
+
+      {/* Government Projects */}
+      <h3>🏗️ Government Projects</h3>
+      <div className="gov-section">
+        {gov_projects.map((project) => (
+          <div key={project.id} className="gov-card">
+            <h4>{project.name}</h4>
+            <p><strong>Region:</strong> {project.region}</p>
+            <p>{project.goal}</p>
+            <p><strong>Budget:</strong> {project.budget}</p>
+            <p><strong>Status:</strong> {project.status}</p>
+            <a href={project.link} target="_blank" rel="noopener noreferrer">More Info</a>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext"; // Import AuthContext hook
+import { useAuth } from "../context/AuthContext";
 import "./ComplaintForm.css";
 
 const ComplaintForm = () => {
-  const { user } = useAuth(); // Get logged-in user info
+  const { user } = useAuth();
   const [complaint, setComplaint] = useState({
     location: "",
     description: "",
@@ -13,7 +13,6 @@ const ComplaintForm = () => {
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
   const [loading, setLoading] = useState(false);
 
-  // Get user's geolocation
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -27,8 +26,8 @@ const ComplaintForm = () => {
           }));
         },
         (error) => {
-          console.error("Error getting location:", error);
-          alert("Please enable location access.");
+          console.error("Geolocation error:", error);
+          alert("⚠️ Location access denied. Please enter manually.");
         }
       );
     }
@@ -45,7 +44,7 @@ const ComplaintForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!complaint.file) {
-      alert("Please upload an image or video.");
+      alert("❌ Please upload an image or video.");
       return;
     }
 
@@ -55,22 +54,23 @@ const ComplaintForm = () => {
     formData.append("location", complaint.location);
     formData.append("description", complaint.description);
     formData.append("file", complaint.file);
-    formData.append("user", user?.email); // ✅ Pass user email or ID here
+    formData.append("user", user?.email);
 
     try {
-      const response = await fetch("http://localhost:5000/api/complaints/register", {
+      const response = await fetch("http://localhost:8000/process-image/", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        alert("Complaint submitted successfully!");
+        const data = await response.json();
+        alert(`✅ Complaint submitted!\nCategory: ${data.category}`);
         setComplaint({ location: complaint.location, description: "", file: null });
       } else {
-        alert("Failed to submit complaint.");
+        alert("❌ Failed to submit complaint.");
       }
     } catch (error) {
-      alert("An error occurred while submitting.");
+      alert("⚠️ Network error. Try again.");
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,6 @@ const ComplaintForm = () => {
   return (
     <div className="complaint-form-container">
       <form onSubmit={handleSubmit} className="complaint-form">
-        {/* Issue Type */}
         <label>Issue Type:</label>
         <select name="description" value={complaint.description} onChange={handleChange} required>
           <option value="">Select Issue Type</option>
@@ -89,27 +88,20 @@ const ComplaintForm = () => {
           <option value="Other">Other</option>
         </select>
 
-        {/* Location */}
-        <label>Specific Location:</label>
+        <label>Location (Auto or Manual Entry):</label>
         <input
           type="text"
           name="location"
           value={complaint.location}
-          placeholder="Auto-detected location"
-          readOnly
+          onChange={handleChange}
+          placeholder="Auto-detected or enter manually"
           required
         />
 
-        {/* File Upload */}
-        <label>Upload relevant images (Optional):</label>
-        <div className="upload-container">
-          <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
-        </div>
+        <label>Upload Image/Video:</label>
+        <input type="file" accept="image/*,video/*" onChange={handleFileChange} required />
 
-        {/* Submit */}
-        <button type="submit" disabled={loading}>
-          {loading ? "Submitting..." : "Submit"}
-        </button>
+        <button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit"}</button>
       </form>
     </div>
   );

@@ -17,13 +17,13 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <h1 className="logo">💧 WaterSave</h1>
+        <h1 className="logo">💧 WaterWise</h1>
 
         <div className={`nav-links ${isOpen ? "open" : ""}`}>
           <Link to="/">Home</Link>
           <Link to="/techniques">Conservation Techniques</Link>
           <Link to="/register-complaint">Report Complaint</Link>
-          <Link to="/contact">Contact</Link>
+        
         </div>
 
         <div className="auth-buttons">
