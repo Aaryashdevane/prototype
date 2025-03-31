@@ -56,21 +56,21 @@ WaterConservation/
 
 ## **🚀 Setup & Installation**
 ### **1️⃣ Clone the Repository**
-
+```sh
 git clone https://github.com/Aaryashdevane/prototype.git
 cd prototype/WaterConservation
-
+```
 
 ### **2️⃣ Install Python Dependencies**
-
+```sh
 pip install -r requirements.txt
-
+```
 
 ### **3️⃣ Install Frontend Dependencies**
-
+```sh
 cd frontend
 npm install
-
+```
 
 ### **4️⃣ Configure Environment Variables**
 Create a `.env` file in the root and add:  
@@ -83,13 +83,16 @@ CLOUDINARY_API_SECRET=your_cloudinary_secret
 ```
 
 ### **5️⃣ Run Backend (FastAPI)**
+```sh
 cd python_microservices
 uvicorn app:app --reload
+```
 
 ### **6️⃣ Run Frontend (React)**
+```sh
 cd frontend
 npm run dev
-
+```
 
 ---
 
@@ -121,3 +124,4 @@ Want to improve this project? Follow these steps:
 
 Happy Coding! 🚀💙
 
+---
