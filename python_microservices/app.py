@@ -15,7 +15,7 @@ from io import BytesIO
 # Load environment variables
 load_dotenv()
 
-# Configure Google AI
+# Configure Google Gemini AI
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise RuntimeError("❌ Missing GEMINI_API_KEY environment variable!")
@@ -46,43 +46,43 @@ app.add_middleware(
 )
 
 
+# 📌 1️⃣ IMAGE PROCESSING SERVICE
 @app.post("/process-image/")
 async def process_image(
     file: UploadFile = File(...),
     location: str = Form(...)
 ):
     """Processes an uploaded image, categorizes it, and stores the complaint in MongoDB."""
-
     try:
-        # 🔹 1. Upload Image to Cloudinary
+        # Upload Image to Cloudinary
         cloudinary_response = cloudinary.uploader.upload(file.file)
         image_url = cloudinary_response.get("secure_url")
 
         if not image_url:
             raise HTTPException(status_code=500, detail="Failed to upload image to Cloudinary.")
 
-        # 🔹 2. Download the image from Cloudinary for Gemini processing
+        # Download image from Cloudinary for Gemini processing
         try:
             response = requests.get(image_url)
-            response.raise_for_status()  # Raise error if download fails
+            response.raise_for_status()
             image = PIL.Image.open(BytesIO(response.content))
         except requests.RequestException as e:
             raise HTTPException(status_code=500, detail=f"Failed to download image from Cloudinary: {str(e)}")
 
-        # 🔹 3. Process Image with Google Gemini
+        # Process Image with Google Gemini
         model = genai.GenerativeModel("gemini-1.5-flash")
-        response = model.generate_content([image, "Describe this image in detail."], stream=False)
+        response = model.generate_content([image, "Describe this image in detail."])
         description = response.text if response.text else "No description available"
 
-        # 🔹 4. Categorize the image using NLP
+        # Categorize Image
         category = categorize(description)
 
-        # 🔹 5. Store complaint data in MongoDB
+        # Store Complaint Data in MongoDB
         complaint_data = {
             "location": location,
             "description": description,
             "category": category,
-            "image_url": image_url,  # Store Cloudinary URL
+            "image_url": image_url,
             "status": "Pending",
         }
         inserted_id = collection.insert_one(complaint_data).inserted_id
@@ -99,6 +99,7 @@ async def process_image(
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
 
+# 📌 2️⃣ RETRIEVE COMPLAINTS
 @app.get("/complaints/")
 async def get_complaints():
     """Retrieves all complaints for municipal corporation dashboard."""
@@ -115,6 +116,7 @@ async def get_complaints():
         raise HTTPException(status_code=500, detail=f"Error retrieving complaints: {str(e)}")
 
 
+# 📌 3️⃣ UPDATE COMPLAINT STATUS
 @app.patch("/update-status/{complaint_id}")
 async def update_status(complaint_id: str, new_status: str = Form(...)):
     """Updates the status of a complaint."""
@@ -128,6 +130,19 @@ async def update_status(complaint_id: str, new_status: str = Form(...)):
         raise HTTPException(status_code=500, detail=f"Error updating status: {str(e)}")
 
 
+# 📌 4️⃣ CHATBOT SERVICE (USING GEMINI API)
+@app.post("/chatbot/chat")
+async def chatbot(message: str = Form(...)):
+    """Handles user queries and returns AI response."""
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content([message])
+        return {"response": response.text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error in chatbot: {str(e)}")
+
+
+# ✅ MAIN ENTRY POINT
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

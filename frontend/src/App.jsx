@@ -5,15 +5,13 @@ import Home from "./pages/Home.jsx";
 import Signin from "./pages/Signin.jsx";
 import Signup from "./pages/Signup.jsx";
 import RegisterComplaint from "./pages/RegisterComplaint.jsx";
-// import ReportComplaint from "./pages/ComplaintForm.jsx";
 import ConservationTechniques from "./pages/ConservationTechniques.jsx";
 import MunicipalDashboard from "./pages/MunicipalDashboard.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
-// import AuthContext from "./context/AuthContext.jsx"
 import NgoDashboard from "./pages/NgoDashboard.jsx";
 import SubsidyPage from "./pages/Subsidy.jsx";
 import Footer from "./components/Footer.jsx";
-
+import Chatbot from "./components/ChatBot.jsx"; // ✅ Added Chatbot Page
 
 const App = () => {
   return (
@@ -24,9 +22,12 @@ const App = () => {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/register-complaint" element={<RegisterComplaint />} />
-        {/* {<Route path="/report-complaint" element={<ReportComplaint />} /> */}
+        {/* ✅ Commenting properly for clarity */}
+        {/* <Route path="/report-complaint" element={<ReportComplaint />} /> */}
         <Route path="/techniques" element={<ConservationTechniques />} />
-        <Route path="/subsidy" element={<SubsidyPage/>} />
+        <Route path="/subsidy" element={<SubsidyPage />} />
+
+        {/* ✅ Municipal Dashboard - Protected */}
         <Route
           path="/municipal-dashboard"
           element={
@@ -35,6 +36,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* ✅ NGO Dashboard - Protected */}
         <Route
           path="/ngo-dashboard"
           element={
@@ -43,6 +46,9 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* ✅ Chatbot Route Added */}
+        <Route path="/chatbot" element={<Chatbot />} />
       </Routes>
 
       {/* Footer */}
