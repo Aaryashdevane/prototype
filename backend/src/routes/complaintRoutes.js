@@ -1,14 +1,21 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const Complaint = require("../models/Complaint");
 
 const router = express.Router();
 
-// File upload config (keeping as-is)
+// Ensure uploads folder exists
+const uploadDir = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
@@ -26,23 +33,27 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
+// 📌 Serve Uploaded Files
+router.use("/uploads", express.static(uploadDir));
 
+// 📌 Register Complaint
 router.post("/register", upload.single("file"), async (req, res) => {
   try {
     const { location, description, user } = req.body;
-    const filePath = req.file ? req.file.path : null;
+    const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-    if (!location || !description || !filePath || !user) {
+    if (!location || !description || !fileUrl || !user) {
       return res.status(400).json({ error: "All fields are required including user" });
     }
 
     const newComplaint = new Complaint({
       location,
       description,
-      user, // ✅ Add user field here!
-      fileUrl: filePath,
+      user,  // ✅ Make sure this is included
+      fileUrl,
       status: "Pending",
     });
+    
 
     await newComplaint.save();
 
@@ -53,33 +64,31 @@ router.post("/register", upload.single("file"), async (req, res) => {
   }
 });
 
-
-// GET complaints specific to a user
+// 📌 Get Complaints for a Specific User
 router.get("/user/:email", async (req, res) => {
+  console.log("hello");
   const { email } = req.params;
 
   try {
     const userComplaints = await Complaint.find({ user: email }).sort({ createdAt: -1 });
-    res.json(userComplaints);
+
+    res.json({ complaints: userComplaints }); // ✅ Ensuring correct response format
   } catch (error) {
     res.status(500).json({ error: "Error fetching user's complaints" });
   }
 });
 
-// Get all complaints (for municipal dashboard)
+// 📌 Get All Complaints (for Admin/Municipal Dashboard)
 router.get("/all", async (req, res) => {
   try {
     const complaints = await Complaint.find();
-    res.json(complaints);
+    res.json({ complaints });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-
-
-
-// ✅ Update Status (for MC dashboard)
+// 📌 Update Complaint Status
 router.put("/:id/status", async (req, res) => {
   try {
     const { status } = req.body;
@@ -93,24 +102,10 @@ router.put("/:id/status", async (req, res) => {
     complaint.status = status;
     await complaint.save();
 
-    res.json({ message: "Status updated", complaint });
+    res.json({ message: "Status updated successfully", complaint });
   } catch (error) {
     res.status(500).json({ error: "Failed to update status" });
   }
 });
-// PATCH route on complaintRoutes.js
-router.patch("/update-status/:id", async (req, res) => {
-  const { status } = req.body;
-  try {
-    await Complaint.findByIdAndUpdate(req.params.id, { status });
-    res.json({ message: "Status updated successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update status" });
-  }
-});
-
-
-
-
 
 module.exports = router;

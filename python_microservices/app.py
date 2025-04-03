@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Body
 from fastapi.middleware.cors import CORSMiddleware
 import cloudinary
 import cloudinary.uploader
@@ -50,7 +50,8 @@ app.add_middleware(
 @app.post("/process-image/")
 async def process_image(
     file: UploadFile = File(...),
-    location: str = Form(...)
+    location: str = Form(...),
+    user: str = Form(...)  # ✅ Capture user email
 ):
     """Processes an uploaded image, categorizes it, and stores the complaint in MongoDB."""
     try:
@@ -84,6 +85,7 @@ async def process_image(
             "category": category,
             "image_url": image_url,
             "status": "Pending",
+            "user": user  # ✅ Store the user's email
         }
         inserted_id = collection.insert_one(complaint_data).inserted_id
 
@@ -99,12 +101,12 @@ async def process_image(
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
 
-# 📌 2️⃣ RETRIEVE COMPLAINTS
+# 📌 2️⃣ RETRIEVE ALL COMPLAINTS
 @app.get("/complaints/")
 async def get_complaints():
     """Retrieves all complaints for municipal corporation dashboard."""
     try:
-        complaints = list(collection.find({}, {"_id": 1, "location": 1, "description": 1, "category": 1, "status": 1, "image_url": 1}))
+        complaints = list(collection.find({}, {"_id": 1, "location": 1, "description": 1, "category": 1, "status": 1, "image_url": 1, "user": 1}))
         
         # Convert MongoDB ObjectId to string
         for complaint in complaints:
@@ -116,18 +118,24 @@ async def get_complaints():
         raise HTTPException(status_code=500, detail=f"Error retrieving complaints: {str(e)}")
 
 
-# 📌 3️⃣ UPDATE COMPLAINT STATUS
-@app.patch("/update-status/{complaint_id}")
-async def update_status(complaint_id: str, new_status: str = Form(...)):
-    """Updates the status of a complaint."""
+# 📌 3️⃣ RETRIEVE COMPLAINTS FOR A SPECIFIC USER
+@app.get("/complaints/user/{email}")
+async def get_user_complaints(email: str):
+    """Retrieves complaints for a specific user based on their email."""
     try:
-        result = collection.update_one({"_id": ObjectId(complaint_id)}, {"$set": {"status": new_status}})
-        if result.modified_count == 0:
-            raise HTTPException(status_code=404, detail="Complaint not found")
-        return {"message": "Status updated successfully!"}
-    
+        user_complaints = list(collection.find({"user": email}))  # ✅ Query using exact match
+
+        if not user_complaints:
+            return {"complaints": []}  # ✅ Return empty array instead of throwing error
+
+        # Convert MongoDB ObjectId to string
+        for complaint in user_complaints:
+            complaint["_id"] = str(complaint["_id"])
+
+        return {"complaints": user_complaints}
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error updating status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching user complaints: {str(e)}")
 
 
 # 📌 4️⃣ CHATBOT SERVICE (USING GEMINI API)
@@ -140,6 +148,17 @@ async def chatbot(message: str = Form(...)):
         return {"response": response.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error in chatbot: {str(e)}")
+
+
+# 📌 5️⃣ DELETE ALL COMPLAINTS (For Development Purposes)
+@app.delete("/complaints/delete-all/")
+async def delete_all_complaints():
+    """Deletes all complaints from the database."""
+    try:
+        result = collection.delete_many({})
+        return {"message": f"Deleted {result.deleted_count} complaints."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting complaints: {str(e)}")
 
 
 # ✅ MAIN ENTRY POINT
