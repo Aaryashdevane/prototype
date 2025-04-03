@@ -1,4 +1,4 @@
-# Ignore dependencies
+Ignore dependencies
 node_modules/
 venv/
 dist/
