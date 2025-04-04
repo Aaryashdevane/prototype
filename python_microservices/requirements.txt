@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pymongo
+python-dotenv
+cloudinary
+Pillow
+google-generativeai
+requests
+bson
+python-multipart

@@ -1,0 +1,140 @@
+[
+    {
+        "id": 1,
+        "name": "Rainwater Harvesting",
+        "purpose": "To collect and store rainwater for future use, reducing dependence on traditional water sources.",
+        "implementation": [
+            "Rooftop Harvesting: Collecting rainwater from building rooftops and directing it into storage tanks or recharge pits.",
+            "Surface Runoff Harvesting: Capturing rainwater from land surfaces and storing it in reservoirs or ponds."
+        ],
+        "benefits": [
+            "Recharges groundwater levels.",
+            "Provides an alternative water source during dry periods.",
+            "Mitigates urban flooding."
+        ],
+        "notable_example": "In India, rainwater harvesting has been practiced for over 4,000 years, serving as a simple process of accumulating and storing rainwater for drinking, irrigation, and livestock use.",
+        "assigned_ngo": [
+            "Tarun Bharat Sangh",
+            "WaterAid India"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Johads (Traditional Ponds)",
+        "purpose": "To capture and store rainwater, primarily for groundwater recharge and agricultural use.",
+        "implementation": [
+            "Constructing small earthen check dams across seasonally flooded gullies to capture rainwater."
+        ],
+        "benefits": [
+            "Enhances groundwater recharge.",
+            "Supports agriculture and drinking water needs.",
+            "Revives local ecosystems."
+        ],
+        "notable_example": "In Rajasthan, organizations like Tarun Bharat Sangh have built over 4,500 johads, leading to the revival of five rivers.",
+        "assigned_ngo": [
+            "Tarun Bharat Sangh"
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Check Dams / Nala Bunds",
+        "purpose": "To impede water flow in small streams or nalas, facilitating groundwater recharge.",
+        "implementation": [
+            "Constructing small barriers using earth, stones, or concrete across streams to slow water flow and promote percolation."
+        ],
+        "benefits": [
+            "Increases soil moisture.",
+            "Recharges groundwater.",
+            "Supports agriculture in arid regions."
+        ],
+        "notable_example": "The S M Sehgal Foundation has implemented check dams in Haryana, improving water availability in several villages.",
+        "assigned_ngo": [
+            "S M Sehgal Foundation"
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Farm Ponds",
+        "purpose": "To provide on-site water storage for irrigation and other agricultural needs.",
+        "implementation": [
+            "Excavating small ponds on farmland to collect runoff during rains."
+        ],
+        "benefits": [
+            "Ensures water availability during dry spells.",
+            "Reduces soil erosion.",
+            "Improves crop yields."
+        ],
+        "notable_example": "Farmers in Maharashtra have adopted farm ponds extensively to combat drought conditions.",
+        "assigned_ngo": [
+            "Watershed Organisation Trust"
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Contour Trenches / Contour Bunding",
+        "purpose": "To reduce soil erosion and increase water infiltration on sloped lands.",
+        "implementation": [
+            "Digging trenches or building bunds along the natural contours of the land to slow water runoff."
+        ],
+        "benefits": [
+            "Prevents soil erosion.",
+            "Enhances groundwater recharge.",
+            "Improves soil fertility."
+        ],
+        "notable_example": "In Karnataka, contour bunding has been used to restore degraded lands.",
+        "assigned_ngo": [
+            "Jal Bhagirathi Foundation"
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Percolation Tanks",
+        "purpose": "To recharge groundwater by facilitating percolation of stored surface water.",
+        "implementation": [
+            "Constructing shallow tanks in suitable locations to collect runoff, allowing water to percolate into the ground."
+        ],
+        "benefits": [
+            "Augments groundwater levels.",
+            "Supports irrigation and drinking water needs.",
+            "Mitigates drought impacts."
+        ],
+        "notable_example": "Maharashtra's percolation tanks have significantly improved groundwater availability in rural areas.",
+        "assigned_ngo": [
+            "WaterAid India"
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Recharge Pits & Recharge Wells",
+        "purpose": "To directly channel rainwater into underground aquifers.",
+        "implementation": [
+            "Constructing pits or wells filled with filtering materials like sand and gravel to allow water to percolate into the ground."
+        ],
+        "benefits": [
+            "Replenishes depleted aquifers.",
+            "Prevents waterlogging.",
+            "Improves water quality."
+        ],
+        "notable_example": "Urban areas in Bangalore have adopted recharge wells to combat groundwater depletion.",
+        "assigned_ngo": [
+            "Arghyam Foundation"
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Sand Dams",
+        "purpose": "To store water in sand-filled reservoirs, reducing evaporation losses.",
+        "implementation": [
+            "Building a reinforced concrete wall across a seasonal riverbed to trap sand, which stores water."
+        ],
+        "benefits": [
+            "Provides a reliable water source during dry seasons.",
+            "Supports agriculture and domestic use.",
+            "Reduces evaporation compared to open water storage."
+        ],
+        "notable_example": "Sand dams in Kenya have transformed arid regions by providing year-round water.",
+        "assigned_ngo": [
+            "Water.org"
+        ]
+    }
+]

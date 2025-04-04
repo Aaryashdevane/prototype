@@ -22,4 +22,33 @@
     margin: 5px 0;
     color: #1f2937;
   }
+  .complaint-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .complaint-card img.complaint-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .complaint-card.pending {
+    background-color: #ffeb3b;
+  }
+  
+  .complaint-card.resolved {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .complaint-card.rejected {
+    background-color: #f44336;
+    color: white;
+  }
   

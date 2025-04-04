@@ -5,33 +5,61 @@ import "./StatusTracker.css";
 const StatusTracker = () => {
   const { user } = useAuth();
   const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchMyComplaints = async () => {
-      const res = await fetch(`http://localhost:5000/api/complaints/user/${user?.email}`);
-      const data = await res.json();
-      setComplaints(data);
+      if (!user?.email) return;
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await fetch(`http://localhost:8000/complaints/user/${user.email}`);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch complaints.");
+        }
+
+        const data = await res.json();
+
+        if (!data.complaints || !Array.isArray(data.complaints)) {
+          throw new Error("Invalid response format.");
+        }
+        
+
+        setComplaints(data.complaints);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (user) fetchMyComplaints();
+    fetchMyComplaints();
   }, [user]);
 
   return (
     <div className="status-tracker">
-    
-      {complaints.length === 0 ? (
-        <p>No complaints found!</p>
-      ) : (
-        <div className="complaint-list">
-          {complaints.map((complaint) => (
-            <div key={complaint._id} className="complaint-card">
-              <p><strong>Description:</strong> {complaint.description}</p>
-              <p><strong>Location:</strong> {complaint.location}</p>
-              <p><strong>Status:</strong> {complaint.status}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      <h2>My Complaints</h2>
+
+      {loading && <p>Loading complaints...</p>}
+      {error && <p className="error">{error}</p>}
+      {!loading && complaints.length === 0 && <p>No complaints found!</p>}
+
+      <div className="complaint-list">
+        {complaints.map((complaint) => (
+          <div key={complaint._id} className={`complaint-card ${complaint.status.toLowerCase()}`}>
+            {complaint.image_url && (
+              <img src={complaint.image_url} alt="Complaint" className="complaint-image" />
+            )}
+            <p><strong>Description:</strong> {complaint.description}</p>
+            <p><strong>Location:</strong> {complaint.location}</p>
+            <p><strong>Status:</strong> <span className="status">{complaint.status}</span></p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
