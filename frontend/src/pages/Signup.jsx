@@ -1,37 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Auth.css"; // Import the same Auth CSS as Signin
+import "./Auth.css";
+import stateData from "../states-and-districts.json";
 
 const Signup = () => {
   const { login } = useAuth();
-
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     mobile: "",
     address: "",
-    role: "user", // Default role
+    aadhaar: "",
+    pincode: "",
+    state: "",
+    district: "",
+    role: "user",
   });
+  const [agreeToPolicy, setAgreeToPolicy] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [districts, setDistricts] = useState([]);
 
+  // Extract states from the JSON data
+  const states = stateData.states.map(stateObj => stateObj.state);
+
+  // Get districts for selected state
+  useEffect(() => {
+    if (formData.state) {
+      const selectedStateObj = stateData.states.find(s => s.state === formData.state);
+      const stateDistricts = selectedStateObj ? selectedStateObj.districts : [];
+      setDistricts(stateDistricts);
+    } else {
+      setDistricts([]);
+    }
+  }, [formData.state]);
+
+ 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === "password" || name === "confirmPassword") {
+      setPasswordError("");
+    }
+  };
+
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setFormData(prev => ({ ...prev, state, district: ""}));
+  };
+
+  const handleDistrictChange = (e) => {
+    const district = e.target.value;
+    setFormData(prev => ({ ...prev, district}));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    if (!agreeToPolicy) {
+      alert("You must agree to the password policy to proceed");
+      return;
+    }
+
     const response = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        ...formData,
+        confirmPassword: undefined
+      }),
     });
 
     const data = await response.json();
     if (response.ok) {
       login(formData.role);
-      navigate("/signin"); // Redirect to Signin after signup
+      navigate("/signin");
     } else {
       alert(data.message);
     }
@@ -67,6 +119,16 @@ const Signup = () => {
             required
           />
           <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Re-enter Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          {passwordError && <div className="error-message">{passwordError}</div>}
+          
+          <input
             type="text"
             name="mobile"
             placeholder="Mobile Number"
@@ -76,14 +138,57 @@ const Signup = () => {
           />
           <input
             type="text"
+            name="aadhaar"
+            placeholder="Aadhaar Card Number"
+            value={formData.aadhaar}
+            onChange={handleChange}
+            required
+          />
+          <textarea
             name="address"
-            placeholder="Address"
+            placeholder="Full Address"
             value={formData.address}
             onChange={handleChange}
             required
           />
+          <div className="address-details">
+            <input
+              type="text"
+              name="pincode"
+              placeholder="Pin Code"
+              value={formData.pincode}
+              onChange={handleChange}
+              required
+            />
+            
+            <div className="dropdown-group">
+              <select
+                name="state"
+                value={formData.state}
+                onChange={handleStateChange}
+                required
+              >
+                <option value="">Select State</option>
+                {states.map(state => (
+                  <option key={state} value={state}>{state}</option>
+                ))}
+              </select>
 
-          {/* Role Selection */}
+              <select
+                name="district"
+                value={formData.district}
+                onChange={handleDistrictChange}
+                disabled={!formData.state}
+                required
+              >
+                <option value="">Select District</option>
+                {districts.map(district => (
+                  <option key={district} value={district}>{district}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div className="role-select">
             <label>Select Role:</label>
             <select name="role" value={formData.role} onChange={handleChange}>
@@ -91,12 +196,28 @@ const Signup = () => {
               <option value="municipal">Municipal Corporation</option>
               <option value="ngo">NGO Representative</option>
             </select>
-
           </div>
 
-          <button type="submit" className="auth-btn">Sign Up</button>
+          <div className="policy-check">
+            <input
+              type="checkbox"
+              id="policy"
+              checked={agreeToPolicy}
+              onChange={(e) => setAgreeToPolicy(e.target.checked)}
+              required
+            />
+            <label htmlFor="policy">
+            I accept the terms and agree to use this data accordingly.
+            </label>
+          </div>
+
+          <button type="submit" className="auth-btn">
+            Sign Up
+          </button>
         </form>
-        <p>Already have an account? <a href="/signin">Sign In</a></p>
+        <p>
+          Already have an account? <a href="/signin">Sign In</a>
+        </p>
       </div>
     </div>
   );

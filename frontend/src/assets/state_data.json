@@ -1,0 +1,31 @@
+{
+  "Maharashtra": {
+    "Mumbai": [
+      "South Mumbai",
+      "Western Suburbs",
+      "Eastern Suburbs"
+    ],
+    "Pune": [
+      "Pune City",
+      "Pimpri-Chinchwad",
+      "Haveli"
+    ],
+    "Nagpur": [
+      "Nagpur City",
+      "Katol",
+      "Narkhed"
+    ]
+  },
+  "Karnataka": {
+    "Bangalore": [
+      "Bangalore Urban",
+      "Bangalore Rural",
+      "Anekal"
+    ],
+    "Mysore": [
+      "Mysore City",
+      "Hunsur",
+      "Nanjangud"
+    ]
+  }
+}
