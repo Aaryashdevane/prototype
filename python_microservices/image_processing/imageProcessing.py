@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 
 # Configure Gemini API
-genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key="AIzaSyBI170vlVKhHS7SGmngHi-neBAH2g3ccs4")
 
 def describe_image(image_path):
     image = PIL.Image.open(image_path)

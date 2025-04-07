@@ -5,28 +5,33 @@ import "./Testimonials.css";
 const testimonials = [
   {
     name: "Aaryash",
-    review: "This platform helped me find new ways to conserve water at home. Highly recommended!",
+    review: "This platform helped me reduce my water usage by 30% with simple home tips. Amazing!",
     img: "https://randomuser.me/api/portraits/men/1.jpg",
+    location: "Bangalore"
   },
   {
     name: "Riya Sharma",
-    review: "An amazing initiative! Water conservation is crucial, and this website makes it easy.",
+    review: "The leak reporting feature helped our society save thousands of liters. Essential tool!",
     img: "https://randomuser.me/api/portraits/women/2.jpg",
+    location: "Delhi"
   },
   {
     name: "Kabir Das",
-    review: "Very informative and well-designed. The reporting feature is a game-changer!",
+    review: "Finally a platform that makes water conservation accessible to everyone. Brilliant!",
     img: "https://randomuser.me/api/portraits/men/3.jpg",
+    location: "Mumbai"
   },
   {
     name: "Ananya Verma",
-    review: "A great platform to spread awareness about water conservation. Loved it!",
+    review: "The rainwater harvesting guides transformed our apartment complex. 5 stars!",
     img: "https://randomuser.me/api/portraits/women/4.jpg",
+    location: "Chennai"
   },
   {
     name: "Rohan Mehta",
-    review: "The tips and techniques shared here are very practical and easy to follow.",
+    review: "As a farmer, the irrigation techniques saved my crops during drought season.",
     img: "https://randomuser.me/api/portraits/men/5.jpg",
+    location: "Pune"
   },
 ];
 
@@ -46,14 +51,14 @@ const Testimonials = () => {
   useEffect(() => {
     const autoScroll = setInterval(() => {
       handleNext();
-    }, 5000); // Auto-scroll every 5 seconds
+    }, 5000);
 
-    return () => clearInterval(autoScroll); // Cleanup interval on unmount
+    return () => clearInterval(autoScroll);
   }, []);
 
   const visibleTestimonials =
-    window.innerWidth <= 480 // Check if the screen width is mobile size
-      ? [testimonials[currentIndex]] // Show only one testimonial on mobile
+    window.innerWidth <= 768
+      ? [testimonials[currentIndex]]
       : [
           testimonials[(currentIndex - 1 + testimonials.length) % testimonials.length],
           testimonials[currentIndex],
@@ -61,40 +66,67 @@ const Testimonials = () => {
         ];
 
   return (
-    <motion.div
+    <motion.div 
       className="testimonials"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <h2 >What Our Users Say</h2>
+      <div className="water-wave"></div>
+      <h2>
+        Voices for Change
+      </h2>
+      
       <div className="testimonial-container">
-        {window.innerWidth > 480 && (
+        {window.innerWidth > 768 && (
           <button className="nav-button left" onClick={handlePrev}>
-            &#8249;
+            <WaterDropIcon direction="left" />
           </button>
         )}
+
         {visibleTestimonials.map((testimonial, index) => (
           <motion.div
             key={index}
             className={`testimonial-card ${
-              index === 1 && window.innerWidth > 480 ? "active" : "" /* Highlight the middle card */
+              index === 1 && window.innerWidth > 768 ? "active" : ""
             }`}
             whileHover={{ scale: 1.05 }}
           >
+            <div className="card-wave"></div>
             <img src={testimonial.img} alt={testimonial.name} />
             <h3>{testimonial.name}</h3>
+            <p className="location">{testimonial.location}</p>
             <p className="testimonial-content">"{testimonial.review}"</p>
           </motion.div>
         ))}
-        {window.innerWidth > 480 && (
+
+        {window.innerWidth > 768 && (
           <button className="nav-button right" onClick={handleNext}>
-            &#8250;
+            <WaterDropIcon direction="right" />
           </button>
         )}
+      </div>
+
+      <div className="indicators">
+        {testimonials.map((_, index) => (
+          <div 
+            key={index}
+            className={`indicator ${currentIndex === index ? 'active' : ''}`}
+            onClick={() => setCurrentIndex(index)}
+          />
+        ))}
       </div>
     </motion.div>
   );
 };
+
+const WaterDropIcon = ({ direction }) => (
+  <motion.div
+    animate={{ x: direction === 'left' ? [-2, 0, -2] : [2, 0, 2] }}
+    transition={{ repeat: Infinity, duration: 1.5 }}
+  >
+    {direction === 'left' ? '<' : '>'}
+  </motion.div>
+);
 
 export default Testimonials;

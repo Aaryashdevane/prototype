@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import "./Navbar.css";
 import { useAuth } from "../context/AuthContext"; // ✅ Correct import
 
@@ -28,7 +29,6 @@ const Navbar = () => {
 
           <Link to="/subsidy">Subsidy</Link>  
           <Link to="/contact">Contact</Link>
-
         </div>
 
         <div className="auth-buttons">
@@ -49,8 +49,22 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <Link to="/signin" className="btn-login">Sign In</Link>
-              <Link to="/signup" className="btn-signup">Sign Up</Link>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/signin" className="btn-login">
+                  Sign In
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/signup" className="btn-signup">
+                  Sign Up
+                </Link>
+              </motion.div>
             </>
           )}
         </div>
