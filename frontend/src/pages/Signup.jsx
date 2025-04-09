@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { FaEyeSlash,FaEye } from "react-icons/fa";
 import "./Signup.css";
 import stateData from "../states-and-districts.json";
 
@@ -24,14 +25,17 @@ const Signup = () => {
   const [agreeToPolicy, setAgreeToPolicy] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [districts, setDistricts] = useState([]);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   // Extract states from the JSON data
-  const states = stateData.states.map(stateObj => stateObj.state);
+  const states = stateData.states.map((stateObj) => stateObj.state);
 
   // Get districts for selected state
   useEffect(() => {
     if (formData.state) {
-      const selectedStateObj = stateData.states.find(s => s.state === formData.state);
+      const selectedStateObj = stateData.states.find(
+        (s) => s.state === formData.state
+      );
       const stateDistricts = selectedStateObj ? selectedStateObj.districts : [];
       setDistricts(stateDistricts);
     } else {
@@ -39,11 +43,10 @@ const Signup = () => {
     }
   }, [formData.state]);
 
- 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (name === "password" || name === "confirmPassword") {
       setPasswordError("");
     }
@@ -51,17 +54,17 @@ const Signup = () => {
 
   const handleStateChange = (e) => {
     const state = e.target.value;
-    setFormData(prev => ({ ...prev, state, district: ""}));
+    setFormData((prev) => ({ ...prev, state, district: "" }));
   };
 
   const handleDistrictChange = (e) => {
     const district = e.target.value;
-    setFormData(prev => ({ ...prev, district}));
+    setFormData((prev) => ({ ...prev, district }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       setPasswordError("Passwords do not match");
       return;
@@ -77,7 +80,7 @@ const Signup = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formData,
-        confirmPassword: undefined
+        confirmPassword: undefined,
       }),
     });
 
@@ -111,24 +114,43 @@ const Signup = () => {
             onChange={handleChange}
             required
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Re-enter Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"} // Toggle between text and password
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />
+              } 
+            </button>
+          </div>
+          <div className="password-field">
+            <input
+              type={showConfirmPassword ? "text" : "password"} // Toggle between text and password
+              name="confirmPassword"
+              placeholder="Re-enter Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />} {/* Emoji for eye toggle */}
+            </button>
+          </div>
           {passwordError && <div className="error-message">{passwordError}</div>}
-          
+
           <input
             type="text"
             name="mobile"
@@ -161,7 +183,7 @@ const Signup = () => {
               onChange={handleChange}
               required
             />
-            
+
             <div className="dropdown-group">
               <select
                 name="state"
@@ -170,8 +192,10 @@ const Signup = () => {
                 required
               >
                 <option value="">Select State</option>
-                {states.map(state => (
-                  <option key={state} value={state}>{state}</option>
+                {states.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
                 ))}
               </select>
 
@@ -183,8 +207,10 @@ const Signup = () => {
                 required
               >
                 <option value="">Select District</option>
-                {districts.map(district => (
-                  <option key={district} value={district}>{district}</option>
+                {districts.map((district) => (
+                  <option key={district} value={district}>
+                    {district}
+                  </option>
                 ))}
               </select>
             </div>
@@ -208,7 +234,7 @@ const Signup = () => {
               required
             />
             <label htmlFor="policy">
-            I accept the terms and agree to use this data accordingly.
+              I accept the terms and agree to use this data accordingly.
             </label>
           </div>
 

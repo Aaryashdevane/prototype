@@ -6,7 +6,7 @@
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center;
+        url('https://images.unsplash.com/photo-1502726299822-6f583f972e02?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center;
     background-size: cover;
     padding: 20px;
     position: relative;
@@ -219,7 +219,6 @@
     text-decoration: underline;
 }
 
-
 .water-drop {
     position: absolute;
     width: 100px;
@@ -242,6 +241,33 @@
     left: -20px;
     width: 120px;
     height: 120px;
+}
+
+.password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-field input {
+    flex: 1;
+    padding-right: 40px; /* Add space for the eye button */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #555;
+    outline: none;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #1a6fc9; /* Change color on hover */
 }
 
 /* Responsive adjustments */
