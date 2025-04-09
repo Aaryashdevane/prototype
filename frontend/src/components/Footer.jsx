@@ -6,13 +6,24 @@ const Footer = () => {
   return (
     <motion.footer 
       className="footer"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3 }}
     >
       <div className="footer-content">
-        <h2>Water Conservation</h2>
-        <p>Saving water, saving life. Join our mission!</p>
+        <div className="footer-logo">
+          <motion.span 
+            animate={{ 
+              rotate: [0, 10, -10, 0],
+              transition: { duration: 1.5, repeat: Infinity }
+            }}
+          >
+            💧
+          </motion.span>
+          <h3>WaterSave</h3>
+        </div>
+
         <div className="footer-links">
           <a href="/">Home</a>
           <a href="/techniques">Techniques</a>
@@ -20,8 +31,9 @@ const Footer = () => {
           <a href="/contact">Contact</a>
         </div>
       </div>
+
       <div className="footer-bottom">
-        <p>&copy; 2025 Water Conservation. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} WaterSave. All rights reserved.</p>
       </div>
     </motion.footer>
   );

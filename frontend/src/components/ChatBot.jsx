@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./ChatBot.css"; // ✅ Ensure styling for floating chat
+import ReactMarkdown from 'react-markdown';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +51,7 @@ const ChatBot = () => {
           <div className="chatbot-messages">
             {chatHistory.map((msg, index) => (
               <div key={index} className={`message ${msg.sender}`}>
-                {msg.text}
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
               </div>
             ))}
           </div>

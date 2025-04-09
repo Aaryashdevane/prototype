@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Load environment variables
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("AIzaSyBI170vlVKhHS7SGmngHi-neBAH2g3ccs4")
 
 if not GEMINI_API_KEY:
     raise RuntimeError("❌ Missing Gemini API Key in .env!")
