@@ -20,6 +20,7 @@ const Signup = () => {
     district: "",
     role: "user",
   });
+  
   const [agreeToPolicy, setAgreeToPolicy] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [districts, setDistricts] = useState([]);
