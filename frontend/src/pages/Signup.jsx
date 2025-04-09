@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Auth.css";
+import "./Signup.css";
 import stateData from "../states-and-districts.json";
 
 const Signup = () => {
@@ -20,7 +20,7 @@ const Signup = () => {
     district: "",
     role: "user",
   });
-  
+
   const [agreeToPolicy, setAgreeToPolicy] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [districts, setDistricts] = useState([]);
