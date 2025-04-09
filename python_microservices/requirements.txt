@@ -8,3 +8,5 @@ google-generativeai
 requests
 bson
 python-multipart
+serpapi
+praw
