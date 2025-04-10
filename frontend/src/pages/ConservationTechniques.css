@@ -202,3 +202,59 @@ ul li {
 .social-card a:hover {
   background: #125ea5;
 }
+
+.caption-container {
+  position: relative;
+  margin-top: 10px;
+}
+
+.caption {
+  display: -webkit-box;
+  -webkit-line-clamp: 5; /* Limit to 5 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.see-more {
+  display: block;
+  margin-top: 5px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.see-more:hover {
+  text-decoration: underline;
+}
+
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+  text-decoration: none;
+}
+
+.tab-button.active {
+  background: #2e7d32;
+  color: #fff;
+  text-decoration: none;
+}
+
+.tab-button:hover {
+  background: #f0f0f0;
+  text-decoration: none;
+}

@@ -1,52 +1,42 @@
 from fastapi import APIRouter
-from services import ingest
+import requests  # Import requests library
 
 router = APIRouter()
 
 @router.get("/posts")
 def get_all_posts():
-    images = ingest.fetch_google_images()
-    videos = ingest.fetch_google_videos()
-    projects = ingest.fetch_project_links()
-    reddit = ingest.fetch_reddit_posts()
+    # Fetch data from the external API
+    api_url = "https://api.apify.com/v2/datasets/ebqwfF7B4cNgONFEx/items?token=apify_api_k3ZwhjGdkpkm0YHiScPBaLWzy2VfsI03zktp"
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an error for HTTP errors
+        data = response.json()  # Parse the JSON response
+    except requests.RequestException as e:
+        return {"error": f"Failed to fetch data from API: {str(e)}"}
 
+    # Extract and normalize the data
     all_posts = []
+    try:
+        top_posts = data[1]["topPosts"]  # Access the second index and its "topPosts"
+        for post in top_posts:
+            # Extract required fields
+            media = None
+            if post.get("type") == "Video":
+                media = post.get("videoUrl")
+            elif post.get("type") == "Sidecar":
+                media = post.get("displayUrl")  # Get the first image if available
+            elif post.get("type") == "Image":
+                media = post.get("displayUrl")
 
-    # Normalize Google Images
-    for img in images:
-        all_posts.append({
-            "source": "Google Images",
-            "title": img["title"],
-            "media": img["local_image_path"],
-            "url": img["image_url"],
-            "type": "image"
-        })
-
-    # Normalize Videos
-    for vid in videos:
-        all_posts.append({
-            "source": "Google Videos",
-            "title": vid["title"],
-            "url": vid["video_url"],
-            "type": "video"
-        })
-
-    # Normalize Project Links
-    for proj in projects:
-        all_posts.append({
-            "source": "Gov/Org Projects",
-            "title": proj["title"],
-            "url": proj["link"],
-            "type": "link"
-        })
-
-    # Normalize Reddit
-    for post in reddit:
-        all_posts.append({
-            "source": "Reddit",
-            "title": post["title"],
-            "url": post["permalink"],
-            "type": "reddit"
-        })
+            normalized_post = {
+                "id": post.get("id"),
+                "type": post.get("type"),
+                "caption": post.get("caption"),
+                "media": media,
+                "url": post.get("url")  # Include the URL field
+            }
+            all_posts.append(normalized_post)
+    except (IndexError, KeyError) as e:
+        return {"error": f"Failed to process data: {str(e)}"}
 
     return {"posts": all_posts}
