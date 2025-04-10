@@ -11,6 +11,7 @@ from bson import ObjectId
 from image_processing.categorizer import categorize
 import requests
 from io import BytesIO
+from scraping.api.routes import router as scraping_router  # ✅ Import the router
 
 # Load environment variables
 load_dotenv()
@@ -44,6 +45,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include the scraping router
+app.include_router(scraping_router)  # ✅ Add the router
 
 
 # 📌 1️⃣ IMAGE PROCESSING SERVICE

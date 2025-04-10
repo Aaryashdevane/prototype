@@ -2,7 +2,7 @@ import os
 import json
 import requests
 import praw
-from serpapi import GoogleSearch
+# from serpapi import GoogleSearch
 from dotenv import load_dotenv
 
 # Load environment variables
