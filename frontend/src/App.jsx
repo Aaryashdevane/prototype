@@ -2,8 +2,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home.jsx";
-import Signin from "./pages/Signin.jsx";
-import Signup from "./pages/Signup.jsx";
+import Signin from "./pages/Auth/Signin.jsx";
+import SignupSelector from "./pages/Auth/SignupSelector.jsx";
 import RegisterComplaint from "./pages/RegisterComplaint.jsx";
 import ConservationTechniques from "./pages/ConservationTechniques.jsx";
 import MunicipalDashboard from "./pages/MunicipalDashboard.jsx";
@@ -20,7 +20,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<SignupSelector />} />
         <Route path="/register-complaint" element={<RegisterComplaint />} />
         {/* ✅ Commenting properly for clarity */}
         {/* <Route path="/report-complaint" element={<ReportComplaint />} /> */}

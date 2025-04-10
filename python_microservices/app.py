@@ -12,7 +12,8 @@ from image_processing.categorizer import categorize
 import requests
 from io import BytesIO
 import json
-
+from geocode import router as geocode_router
+import httpx
 # 📌 Scraping runner
 from scraping.run_pipeline import run_scraping_pipeline
 
@@ -39,7 +40,7 @@ db = client["complaints_db"]
 collection = db["complaints"]
 
 app = FastAPI()
-
+app.include_router(geocode_router, prefix="/api/geocode")
 # ✅ Enable CORS
 app.add_middleware(
     CORSMiddleware,
@@ -192,6 +193,36 @@ async def delete_all_complaints():
         return {"message": f"Deleted {result.deleted_count} complaints."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error deleting complaints: {str(e)}")
+
+
+ # Reverse Geocoding Endpoint (using an example API like Nominatim) 
+@app.get("/api/geocode/reverse")
+async def reverse_geocode(lat: float, lon: float):
+    # External geocoding service URL (this example uses Nominatim API for OpenStreetMap)
+    url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json"
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=503, detail="Geocoding service is unavailable")
+
+    return response.json()
+
+# Directions Endpoint (Using OpenRouteService API as an example)
+@app.get("/api/directions")
+async def get_directions(start_lat: float, start_lon: float, end_lat: float, end_lon: float):
+    # Example API endpoint for directions (OpenRouteService or Google Maps Directions)
+    url = f"https://api.openrouteservice.org/v2/directions/driving-car?api_key=your_api_key&start={start_lon},{start_lat}&end={end_lon},{end_lat}"
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=503, detail="Directions service is unavailable")
+
+    return response.json()
+
 
 # ✅ MAIN ENTRY
 if __name__ == "__main__":
