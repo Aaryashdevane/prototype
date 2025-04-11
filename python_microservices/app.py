@@ -53,21 +53,22 @@ app.add_middleware(
 # --------------------------------------------------
 # 📌 1️⃣ IMAGE PROCESSING SERVICE
 # --------------------------------------------------
+# 📌 Submit Complaint
 @app.post("/process-image/")
 async def process_image(
     file: UploadFile = File(...),
     location: str = Form(...),
-    user: str = Form(...)
+    user: str = Form(...),
+    coordinates: str = Form(...)
 ):
     try:
         cloudinary_response = cloudinary.uploader.upload(file.file)
         image_url = cloudinary_response.get("secure_url")
 
         if not image_url:
-            raise HTTPException(status_code=500, detail="Failed to upload image to Cloudinary.")
+            raise HTTPException(status_code=500, detail="Failed to upload image.")
 
         response = requests.get(image_url)
-        response.raise_for_status()
         image = PIL.Image.open(BytesIO(response.content))
 
         model = genai.GenerativeModel("gemini-1.5-flash")
@@ -82,37 +83,30 @@ async def process_image(
             "category": category,
             "image_url": image_url,
             "status": "Pending",
-            "user": user
+            "user": user,
+            "coordinates": coordinates
         }
+
         inserted_id = collection.insert_one(complaint_data).inserted_id
-
-        return {
-            "message": "Complaint submitted successfully!",
-            "id": str(inserted_id),
-            "description": description,
-            "category": category,
-            "image_url": image_url
-        }
-    
+        return {"message": "Submitted!", "id": str(inserted_id), "description": description, "category": category, "image_url": image_url, "coordinates": coordinates}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-# --------------------------------------------------
-# 📌 2️⃣ GET ALL COMPLAINTS
-# --------------------------------------------------
+# 📌 Get All Complaints
 @app.get("/complaints/")
 async def get_complaints():
     try:
         complaints = list(collection.find({}, {
             "_id": 1, "location": 1, "description": 1,
-            "category": 1, "status": 1, "image_url": 1, "user": 1
+            "category": 1, "status": 1, "image_url": 1,
+            "user": 1, "coordinates": 1
         }))
         for complaint in complaints:
             complaint["_id"] = str(complaint["_id"])
         return {"complaints": complaints}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving complaints: {str(e)}")
-
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    
 # --------------------------------------------------
 # 📌 3️⃣ GET COMPLAINTS FOR A SPECIFIC USER
 # --------------------------------------------------

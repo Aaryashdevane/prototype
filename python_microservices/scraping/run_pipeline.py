@@ -1,7 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv
-from scraping.gemini_processor import process_with_gemini
+# from scraping.gemini_processor import process_with_gemini
 
 # Load .env variables
 load_dotenv()

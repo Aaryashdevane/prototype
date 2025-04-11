@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import stateData from "../../states-and-districts.json";
+import { useAuth } from "../context/AuthContext";
+import stateData from "../states-and-districts.json";
 import "./Auth.css";
 
-const SignupMunicipal = () => {
+const SignupUser = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -14,13 +14,16 @@ const SignupMunicipal = () => {
     confirmPassword: "",
     mobile: "",
     address: "",
+    aadhaar: "",
+    pincode: "",
     state: "",
     district: "",
-    role: "municipal",
+    role: "user",
   });
 
   const [districts, setDistricts] = useState([]);
   const [passwordError, setPasswordError] = useState("");
+  const [agreeToPolicy, setAgreeToPolicy] = useState(false);
 
   useEffect(() => {
     const selected = stateData.states.find(s => s.state === formData.state);
@@ -42,6 +45,11 @@ const SignupMunicipal = () => {
       return;
     }
 
+    if (!agreeToPolicy) {
+      alert("You must agree to the password policy to proceed");
+      return;
+    }
+
     const res = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -60,15 +68,17 @@ const SignupMunicipal = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2>Municipal Sign Up</h2>
+        <h2>User Sign Up</h2>
         <form onSubmit={handleSubmit}>
-          <input name="name" value={formData.name} onChange={handleChange} placeholder="Corporation Name" required />
-          <input name="email" value={formData.email} onChange={handleChange} type="email" placeholder="Official Email" required />
+          <input name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" required />
+          <input name="email" value={formData.email} onChange={handleChange} type="email" placeholder="Email" required />
           <input name="password" value={formData.password} onChange={handleChange} type="password" placeholder="Password" required />
           <input name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} type="password" placeholder="Re-enter Password" required />
           {passwordError && <div className="error-message">{passwordError}</div>}
-          <input name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Contact Number" required />
-          <textarea name="address" value={formData.address} onChange={handleChange} placeholder="Office Address" required />
+          <input name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Mobile Number" required />
+          <input name="aadhaar" value={formData.aadhaar} onChange={handleChange} placeholder="Aadhaar Number" required />
+          <textarea name="address" value={formData.address} onChange={handleChange} placeholder="Full Address" required />
+          <input name="pincode" value={formData.pincode} onChange={handleChange} placeholder="Pincode" required />
 
           <select name="state" value={formData.state} onChange={handleChange} required>
             <option value="">Select State</option>
@@ -84,6 +94,11 @@ const SignupMunicipal = () => {
             ))}
           </select>
 
+          <div className="policy-check">
+            <input type="checkbox" id="policy" checked={agreeToPolicy} onChange={() => setAgreeToPolicy(!agreeToPolicy)} />
+            <label htmlFor="policy">I accept the terms and agree to use this data accordingly.</label>
+          </div>
+
           <button type="submit" className="auth-btn">Register</button>
         </form>
       </div>
@@ -91,4 +106,4 @@ const SignupMunicipal = () => {
   );
 };
 
-export default SignupMunicipal;
+export default SignupUser;
