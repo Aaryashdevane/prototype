@@ -1,15 +1,24 @@
 import os
 import json
 from dotenv import load_dotenv
+<<<<<<< HEAD
 # from scraping.gemini_processor import process_with_gemini
+=======
+from scraping.gemini_processor import process_with_gemini
+>>>>>>> main
 
 # Load .env variables
 load_dotenv()
 def run_scraping_pipeline():
     from scraping.gemini_processor import process_with_gemini
 
+<<<<<<< HEAD
     DATA_FILES = ["scraping/best_practices.json", "scraping/extended_data.json", "scraping/schemes.json"]
     OUTPUT_FILE = "scraping/techniques.json"
+=======
+    DATA_FILES = ["scraping/data/best_practices.json", "scraping/data/extended_data.json", "scraping/data/schemes.json"]
+    OUTPUT_FILE = "scraping/data/processed_data/techniques.json"
+>>>>>>> main
 
     final_data = []
 
@@ -41,4 +50,8 @@ def run_scraping_pipeline():
     with open(OUTPUT_FILE, 'w') as f:
         json.dump(final_data, f, indent=2)
 
+<<<<<<< HEAD
     print("✅ Data saved to", OUTPUT_FILE)
+=======
+    print("✅ Data saved to", OUTPUT_FILE)
+>>>>>>> main

@@ -62,4 +62,8 @@ if __name__ == "__main__":
     }
     result = process_with_gemini(sample_item, "test_source")
     print("Processed Result:")
+<<<<<<< HEAD
     print(json.dumps(result, indent=2))
+=======
+    print(json.dumps(result, indent=2))
+>>>>>>> main

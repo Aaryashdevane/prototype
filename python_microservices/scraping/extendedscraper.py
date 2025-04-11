@@ -77,4 +77,8 @@ async def main_extended():
         await browser.close()
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     asyncio.run(main_extended())
+=======
+    asyncio.run(main_extended())
+>>>>>>> main
