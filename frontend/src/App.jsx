@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home.jsx";
 import Signin from "./pages/Signin.jsx";
-import Signup from "./pages/Signup.jsx";
+import Signup from "./pages/Signup.jsx"
 import RegisterComplaint from "./pages/RegisterComplaint.jsx";
 import ConservationTechniques from "./pages/ConservationTechniques.jsx";
 import SocialPosts from "./components/SocialPosts.jsx";
