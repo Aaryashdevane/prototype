@@ -12,10 +12,8 @@ from image_processing.categorizer import categorize
 import requests
 from io import BytesIO
 import json
-
-# 📌 Scraping runner
+from scraping.api.routes import router as scraping_router  # ✅ Import the router
 from scraping.run_pipeline import run_scraping_pipeline
-
 # Load environment variables
 load_dotenv()
 
@@ -49,7 +47,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --------------------------------------------------
+# Include the scraping router
+app.include_router(scraping_router)  # ✅ Add the router
+
+
 # 📌 1️⃣ IMAGE PROCESSING SERVICE
 # --------------------------------------------------
 @app.post("/process-image/")
@@ -137,38 +138,32 @@ async def chatbot(message: str = Form(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error in chatbot: {str(e)}")
 
+
 # --------------------------------------------------
 # 📌 5️⃣ GET ENHANCED TECHNIQUES FROM FILE
 # --------------------------------------------------
 @app.get("/techniques")
 def get_techniques():
     """Returns pre-scraped and enhanced techniques from file."""
+    print("In the /techniques\n")
     try:
         file_path = "scraping/data/processed_data/techniques.json"
         if not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail="Data not found.")
+            print("Path do not exits\n")
+            raise HTTPException(status_code=404, detail=f"Data not found at {file_path}.")
+        
         with open(file_path, "r") as f:
-            data = json.load(f)
+            print("In the file\n")
+            try:
+                print("Reading the file\n")
+                data = json.load(f)
+            except json.JSONDecodeError as e:
+                print("JSON Decode Error\n")
+                raise HTTPException(status_code=500, detail=f"Invalid JSON format: {str(e)}")
+        
         return {"techniques": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error loading techniques: {str(e)}")
-    
-# --------------------------------------------------
-# 📌 8️⃣ GET SCRAPED POSTS (for frontend feed)
-# --------------------------------------------------
-@app.get("/posts")
-def get_scraped_posts():
-    """Returns all scraped social media / external posts."""
-    try:
-        file_path = "scraping/data/processed_data/techniques.json"
-        if not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail="Scraped posts not found.")
-        with open(file_path, "r") as f:
-            data = json.load(f)
-        return data  # assuming it's a list of posts
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error loading posts: {str(e)}")
-
 
 # --------------------------------------------------
 # 📌 6️⃣ SCRAPE NOW - ONLY ON DEMAND
@@ -181,10 +176,9 @@ def scrape_now():
         return {"status": "success", "message": "Scraping and processing completed."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scraping failed: {str(e)}")
+    
 
-# --------------------------------------------------
-# 📌 7️⃣ DELETE ALL COMPLAINTS
-# --------------------------------------------------
+# 📌 5️⃣ DELETE ALL COMPLAINTS (For Development Purposes)
 @app.delete("/complaints/delete-all/")
 async def delete_all_complaints():
     try:
