@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext"; // Ensure correct import
 import { useNavigate } from "react-router-dom";
@@ -56,6 +57,7 @@ const Signin = () => {
           </div>
 
           {/* Role Selection */}
+
           <label>Select Role:</label>
           <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="user">Regular User</option>
@@ -70,4 +72,6 @@ const Signin = () => {
   );
 };
 
+
 export default Signin;
+

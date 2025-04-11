@@ -54,3 +54,22 @@
 .complaint-form button:hover {
   background-color: #4f46e5;
 }
+
+.geo-error {
+  background-color: #ffdede;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ffaaaa;
+  border-radius: 4px;
+  color: #a94442;
+}
+
+.geo-error button {
+  background: #ff6666;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  margin-top: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}

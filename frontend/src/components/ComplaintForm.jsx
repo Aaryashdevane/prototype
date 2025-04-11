@@ -9,29 +9,49 @@ const ComplaintForm = () => {
     description: "",
     file: null,
   });
-
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
   const [loading, setLoading] = useState(false);
+  const [geoError, setGeoError] = useState("");
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          setCoordinates({ lat, lon });
-          setComplaint((prev) => ({
-            ...prev,
-            location: `${lat}, ${lon}`,
-          }));
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          alert("⚠️ Location access denied. Please enter manually.");
-        }
-      );
+  // Reverse geocoding to fetch human-readable address using Nominatim
+  const fetchAddress = async (lat, lon) => {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&zoom=18&email=your-email@example.com`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Reverse geocoding failed");
+      const data = await res.json();
+      return data.display_name || "";
+    } catch (error) {
+      console.error("Error in reverse geocoding:", error);
+      return "";
     }
-  }, []);
+  };
+
+  // Request user's location and then fetch the corresponding address
+  // In ComplaintForm.jsx
+useEffect(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setCoordinates({ lat, lon });
+        // Call your reverse geocoding (as before) to get the full address
+        const address = await fetchAddress(lat, lon);
+        setComplaint((prev) => ({
+          ...prev,
+          location: address || `${lat}, ${lon}`,
+        }));
+      },
+      (error) => { /* handle error */ }
+    );
+  }
+}, []);
+
+
+  // useEffect(() => {
+  //   fetchLocation();
+  // }, []);
 
   const handleFileChange = (e) => {
     setComplaint({ ...complaint, file: e.target.files[0] });
@@ -47,14 +67,16 @@ const ComplaintForm = () => {
       alert("❌ Please upload an image or video.");
       return;
     }
-
     setLoading(true);
 
+    // Prepare form data with human-readable address and raw coordinates.
     const formData = new FormData();
     formData.append("location", complaint.location);
     formData.append("description", complaint.description);
     formData.append("file", complaint.file);
     formData.append("user", user?.email);
+    // Send coordinates as a JSON string (or you could use separate fields)
+    formData.append("coordinates", JSON.stringify(coordinates));
 
     try {
       const response = await fetch("http://localhost:8000/process-image/", {
@@ -65,6 +87,7 @@ const ComplaintForm = () => {
       if (response.ok) {
         const data = await response.json();
         alert(`✅ Complaint submitted!\nCategory: ${data.category}`);
+        // Reset while keeping the auto-populated location
         setComplaint({ location: complaint.location, description: "", file: null });
       } else {
         alert("❌ Failed to submit complaint.");
@@ -94,14 +117,25 @@ const ComplaintForm = () => {
           name="location"
           value={complaint.location}
           onChange={handleChange}
-          placeholder="Auto-detected or enter manually"
+          placeholder="Auto-detected address or enter manually"
           required
         />
+
+        {geoError && (
+          <div className="geo-error">
+            <p>{geoError}</p>
+            <button type="button" onClick={fetchLocation}>
+              Try Again
+            </button>
+          </div>
+        )}
 
         <label>Upload Image/Video:</label>
         <input type="file" accept="image/*,video/*" onChange={handleFileChange} required />
 
-        <button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit"}</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Submitting..." : "Submit"}
+        </button>
       </form>
     </div>
   );

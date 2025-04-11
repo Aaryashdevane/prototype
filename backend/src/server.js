@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
+const geocodeRoutes = require('./routes/geocodeRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads")); // Serve uploaded files
 app.use("/api/auth", authRoutes); // ✅ Auth routes
 app.use("/api/complaints", complaintRoutes); // ✅ Complaint routes
+app.use('/api/geocode', geocodeRoutes);
 
 // MongoDB connection
 mongoose.connect(MONGO_URI, {

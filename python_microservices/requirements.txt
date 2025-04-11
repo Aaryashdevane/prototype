@@ -10,3 +10,6 @@ bson
 python-multipart
 serpapi
 praw
+httpx
+playwright
+google-search-results

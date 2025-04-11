@@ -12,7 +12,13 @@ from image_processing.categorizer import categorize
 import requests
 from io import BytesIO
 import json
+
+from geocode import router as geocode_router
+import httpx
+# 📌 Scraping runner
+
 from scraping.api.routes import router as scraping_router  # ✅ Import the router
+
 from scraping.run_pipeline import run_scraping_pipeline
 # Load environment variables
 load_dotenv()
@@ -37,7 +43,7 @@ db = client["complaints_db"]
 collection = db["complaints"]
 
 app = FastAPI()
-
+app.include_router(geocode_router, prefix="/api/geocode")
 # ✅ Enable CORS
 app.add_middleware(
     CORSMiddleware,
@@ -53,21 +59,22 @@ app.include_router(scraping_router)  # ✅ Add the router
 
 # 📌 1️⃣ IMAGE PROCESSING SERVICE
 # --------------------------------------------------
+# 📌 Submit Complaint
 @app.post("/process-image/")
 async def process_image(
     file: UploadFile = File(...),
     location: str = Form(...),
-    user: str = Form(...)
+    user: str = Form(...),
+    coordinates: str = Form(...)
 ):
     try:
         cloudinary_response = cloudinary.uploader.upload(file.file)
         image_url = cloudinary_response.get("secure_url")
 
         if not image_url:
-            raise HTTPException(status_code=500, detail="Failed to upload image to Cloudinary.")
+            raise HTTPException(status_code=500, detail="Failed to upload image.")
 
         response = requests.get(image_url)
-        response.raise_for_status()
         image = PIL.Image.open(BytesIO(response.content))
 
         model = genai.GenerativeModel("gemini-1.5-flash")
@@ -82,37 +89,30 @@ async def process_image(
             "category": category,
             "image_url": image_url,
             "status": "Pending",
-            "user": user
+            "user": user,
+            "coordinates": coordinates
         }
+
         inserted_id = collection.insert_one(complaint_data).inserted_id
-
-        return {
-            "message": "Complaint submitted successfully!",
-            "id": str(inserted_id),
-            "description": description,
-            "category": category,
-            "image_url": image_url
-        }
-    
+        return {"message": "Submitted!", "id": str(inserted_id), "description": description, "category": category, "image_url": image_url, "coordinates": coordinates}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-# --------------------------------------------------
-# 📌 2️⃣ GET ALL COMPLAINTS
-# --------------------------------------------------
+# 📌 Get All Complaints
 @app.get("/complaints/")
 async def get_complaints():
     try:
         complaints = list(collection.find({}, {
             "_id": 1, "location": 1, "description": 1,
-            "category": 1, "status": 1, "image_url": 1, "user": 1
+            "category": 1, "status": 1, "image_url": 1,
+            "user": 1, "coordinates": 1
         }))
         for complaint in complaints:
             complaint["_id"] = str(complaint["_id"])
         return {"complaints": complaints}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving complaints: {str(e)}")
-
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    
 # --------------------------------------------------
 # 📌 3️⃣ GET COMPLAINTS FOR A SPECIFIC USER
 # --------------------------------------------------
@@ -186,6 +186,36 @@ async def delete_all_complaints():
         return {"message": f"Deleted {result.deleted_count} complaints."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error deleting complaints: {str(e)}")
+
+
+ # Reverse Geocoding Endpoint (using an example API like Nominatim) 
+@app.get("/api/geocode/reverse")
+async def reverse_geocode(lat: float, lon: float):
+    # External geocoding service URL (this example uses Nominatim API for OpenStreetMap)
+    url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json"
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=503, detail="Geocoding service is unavailable")
+
+    return response.json()
+
+# Directions Endpoint (Using OpenRouteService API as an example)
+@app.get("/api/directions")
+async def get_directions(start_lat: float, start_lon: float, end_lat: float, end_lon: float):
+    # Example API endpoint for directions (OpenRouteService or Google Maps Directions)
+    url = f"https://api.openrouteservice.org/v2/directions/driving-car?api_key=your_api_key&start={start_lon},{start_lat}&end={end_lon},{end_lat}"
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=503, detail="Directions service is unavailable")
+
+    return response.json()
+
 
 # ✅ MAIN ENTRY
 if __name__ == "__main__":

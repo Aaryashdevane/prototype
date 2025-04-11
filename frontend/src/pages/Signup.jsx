@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+
 import { FaEyeSlash,FaEye } from "react-icons/fa";
 import "./Signup.css";
+
 import stateData from "../states-and-districts.json";
 
-const Signup = () => {
+
+const SignupUser = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -22,6 +24,8 @@ const Signup = () => {
     role: "user",
   });
 
+
+
   const [agreeToPolicy, setAgreeToPolicy] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [districts, setDistricts] = useState([]);
@@ -30,8 +34,9 @@ const Signup = () => {
   // Extract states from the JSON data
   const states = stateData.states.map((stateObj) => stateObj.state);
 
-  // Get districts for selected state
+
   useEffect(() => {
+
     if (formData.state) {
       const selectedStateObj = stateData.states.find(
         (s) => s.state === formData.state
@@ -41,16 +46,19 @@ const Signup = () => {
     } else {
       setDistricts([]);
     }
+
   }, [formData.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "password" || name === "confirmPassword") {
       setPasswordError("");
     }
   };
+
 
   const handleStateChange = (e) => {
     const state = e.target.value;
@@ -75,29 +83,32 @@ const Signup = () => {
       return;
     }
 
-    const response = await fetch("http://localhost:5000/api/auth/register", {
+    const res = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+
       body: JSON.stringify({
         ...formData,
         confirmPassword: undefined,
       }),
+
     });
 
-    const data = await response.json();
-    if (response.ok) {
+    const data = await res.json();
+    if (res.ok) {
       login(formData.role);
       navigate("/signin");
     } else {
-      alert(data.message);
+      alert(data.message || "Registration failed");
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2>Sign Up</h2>
+        <h2>User Sign Up</h2>
         <form onSubmit={handleSubmit}>
+
           <input
             type="text"
             name="name"
@@ -236,18 +247,14 @@ const Signup = () => {
             <label htmlFor="policy">
               I accept the terms and agree to use this data accordingly.
             </label>
+
           </div>
 
-          <button type="submit" className="auth-btn">
-            Sign Up
-          </button>
+          <button type="submit" className="auth-btn">Register</button>
         </form>
-        <p>
-          Already have an account? <a href="/signin">Sign In</a>
-        </p>
       </div>
     </div>
   );
 };
 
-export default Signup;
+export default SignupUser;
