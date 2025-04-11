@@ -145,24 +145,30 @@ async def chatbot(message: str = Form(...)):
 @app.get("/techniques")
 def get_techniques():
     """Returns pre-scraped and enhanced techniques from file."""
-    print("In the /techniques\n")
+    print("In the /techniques endpoint")
     try:
-        file_path = "scraping/data/processed_data/techniques.json"
+        # Resolve the absolute path of the JSON file
+        file_path = os.path.join(os.path.dirname(__file__), "scraping/data/processed_data/techniques.json")
+        
         if not os.path.exists(file_path):
-            print("Path do not exits\n")
+            print(f"Path does not exist: {file_path}")
             raise HTTPException(status_code=404, detail=f"Data not found at {file_path}.")
         
+        if os.stat(file_path).st_size == 0:
+            print(f"File is empty: {file_path}")
+            raise HTTPException(status_code=500, detail="JSON file is empty.")
+        
         with open(file_path, "r") as f:
-            print("In the file\n")
+            print("Reading the file")
             try:
-                print("Reading the file\n")
                 data = json.load(f)
             except json.JSONDecodeError as e:
-                print("JSON Decode Error\n")
+                print(f"JSON Decode Error: {e}")
                 raise HTTPException(status_code=500, detail=f"Invalid JSON format: {str(e)}")
         
         return {"techniques": data}
     except Exception as e:
+        print(f"Error in get_techniques: {e}")
         raise HTTPException(status_code=500, detail=f"Error loading techniques: {str(e)}")
 
 # --------------------------------------------------
