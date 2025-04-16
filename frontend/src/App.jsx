@@ -14,6 +14,8 @@ import NgoDashboard from "./pages/NgoDashboard.jsx";
 import SubsidyPage from "./pages/Subsidy.jsx";
 import Footer from "./components/Footer.jsx";
 import Chatbot from "./components/ChatBot.jsx";
+import InstaPosts from "./components/InstaPosts.jsx";
+import TwitterPosts from "./components/TwitterPosts.jsx";
 
 const App = () => {
   return (
@@ -25,9 +27,14 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/register-complaint" element={<RegisterComplaint />} />
         <Route path="/techniques" element={<ConservationTechniques />}>
-          {/* Redirect default /techniques to /techniques/social */}
-          <Route index element={<Navigate to="/techniques/social" replace />} />
-          <Route path="social" element={<SocialPosts />} />
+          {/* Redirect default /techniques to /techniques/social/twitter */}
+          <Route index element={<Navigate to="/techniques/social/twitter" replace />} />
+          <Route path="/techniques/social" element={<SocialPosts />}>
+            {/* Redirect default /techniques/social to /techniques/social/twitter */}
+            <Route index element={<Navigate to="/techniques/social/twitter" replace />} />
+            <Route path="insta" element={<InstaPosts />} />
+            <Route path="twitter" element={<TwitterPosts />} />
+          </Route>
           <Route path="schemes" element={<GovernmentSchemes />} />
         </Route>
         <Route path="/subsidy" element={<SubsidyPage />} />

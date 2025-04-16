@@ -1,6 +1,6 @@
 import os
 import json
-from dotenv import load_dotenv0
+from dotenv import load_dotenv
 
 # Load .env variables
 load_dotenv()

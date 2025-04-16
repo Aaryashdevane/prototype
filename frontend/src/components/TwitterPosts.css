@@ -1,0 +1,133 @@
+/* Container */
+.twitter-container {
+    padding: 20px;
+    background-color: #f5f8fa;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Grid Layout */
+.twitter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Twitter Card */
+.twitter-card {
+    background: #ffffff;
+    border: 1px solid #e1e8ed;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.twitter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Author Section */
+.twitter-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.twitter-profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.twitter-author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.twitter-author-name {
+    font-weight: bold;
+    color: #14171a;
+}
+
+.twitter-author-username {
+    font-size: 0.9rem;
+    color: #657786;
+}
+
+/* Tweet Text */
+.twitter-text {
+    font-size: 1rem;
+    color: #14171a;
+    line-height: 1.5;
+}
+
+/* Media Section */
+.twitter-media {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+    object-fit: cover;
+}
+
+/* Footer Section */
+.twitter-footer {
+    margin-top: 10px;
+}
+
+.twitter-view-link {
+    color: #1da1f2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.twitter-view-link:hover {
+    text-decoration: underline;
+}
+
+/* Skeleton Loader */
+.skeleton-card {
+    background: #e1e8ed;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #cfd9de;
+}
+
+.skeleton-text {
+    height: 16px;
+    background: #cfd9de;
+    border-radius: 4px;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #e1e8ed;
+    }
+    50% {
+        background-color: #f5f8fa;
+    }
+    100% {
+        background-color: #e1e8ed;
+    }
+}
