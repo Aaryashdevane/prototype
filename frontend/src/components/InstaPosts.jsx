@@ -23,7 +23,7 @@ const InstaPosts = () => {
     const loadMorePosts = () => {
         setVisiblePosts((prevVisiblePosts) => prevVisiblePosts + 8); // Show 8 more posts
     };
-
+    
     return (
     <div className="techniques-container">
         {/* Show Skeleton Loader while loading */}

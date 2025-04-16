@@ -12,7 +12,7 @@ from image_processing.categorizer import categorize
 import requests
 from io import BytesIO
 import json
-
+from pydantic import BaseModel
 from geocode import router as geocode_router
 import httpx
 # 📌 Scraping runner
@@ -47,12 +47,24 @@ app.include_router(geocode_router, prefix="/api/geocode")
 # ✅ Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Change this if frontend is deployed elsewhere
+    allow_origins=["http://localhost:5174"],  # Change this if frontend is deployed elsewhere
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+techniques_data = {
+    "Rainwater Harvesting": [
+        {"title": "Rainwater Harvesting", "description": "Capture and store rainwater for later use."},
+        {"title": "Roof Rainwater Harvesting", "description": "Harvest rainwater from the roof for household use."}
+    ],
+    "Afforestation": [
+        {"title": "Afforestation", "description": "Planting trees to prevent soil erosion and increase water retention."}
+    ],
+    "Groundwater Recharge": [
+        {"title": "Recharge Wells", "description": "Use wells to recharge the groundwater table."},
+        {"title": "Check Dams", "description": "Build check dams to help recharge groundwater."}
+    ]
+}
 # Include the scraping router
 app.include_router(scraping_router)  # ✅ Add the router
 
@@ -221,6 +233,59 @@ async def get_directions(start_lat: float, start_lon: float, end_lat: float, end
         raise HTTPException(status_code=503, detail="Directions service is unavailable")
 
     return response.json()
+# Create a mock data model for rainfall data
+ctechniques_data = {
+    "Rainwater Harvesting": [
+        "Rainwater harvesting for household use",
+        "Rainwater harvesting for irrigation",
+    ],
+    "Groundwater Recharge": [
+        "Recharge pits for groundwater enhancement",
+        "Check dams for groundwater recharge",
+    ],
+    "Afforestation": [
+        "Forest restoration programs",
+        "Tree plantation on barren land",
+    ],
+}
+
+# Create a mock data model for rainfall data
+class RainfallData(BaseModel):
+    latitude: float
+    longitude: float
+    annual_rainfall: float
+
+# Example of rainfall data (with latitude, longitude, and rainfall)
+rainfall_data = [
+    {"latitude": 12.9794048, "longitude": 77.594624, "annual_rainfall": 1000},
+    {"latitude": 28.704060, "longitude": 77.102493, "annual_rainfall": 800},
+    {"latitude": 19.076090, "longitude": 72.877426, "annual_rainfall": 1200},
+]
+
+@app.get("/rainfall")
+async def get_rainfall(lat: float, lon: float):
+    # Look for a matching entry based on latitude and longitude
+    for entry in rainfall_data:
+        if entry['latitude'] == lat and entry['longitude'] == lon:
+            return {"annual_rainfall": entry['annual_rainfall']}
+    
+    # If no match, return 404 not found
+    raise HTTPException(status_code=404, detail="Rainfall data not found for this location.")
+
+
+# This route suggests conservation techniques based on rainfall amount
+@app.get("/techniques/suggestions")
+async def get_suitable_techniques(annual_rainfall: float):
+    if annual_rainfall > 1000:
+        # High rainfall: Suggest Rainwater Harvesting and Afforestation
+        return {"suggested_techniques": techniques_data["Rainwater Harvesting"] + techniques_data["Afforestation"]}
+    elif annual_rainfall < 800:
+        # Low rainfall: Suggest Groundwater Recharge
+        return {"suggested_techniques": techniques_data["Groundwater Recharge"]}
+    else:
+        # Moderate rainfall: Suggest a combination of techniques
+        return {"suggested_techniques": techniques_data["Rainwater Harvesting"] + techniques_data["Groundwater Recharge"]}
+
 
 
 # ✅ MAIN ENTRY
