@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import useAuthStore from "../store/authStore";
 import "./ComplaintForm.css";
 
 const ComplaintForm = () => {
-  const { user } = useAuth();
+  const loadUser = useAuthStore((state) => state.loadUser);
+  const { user } = useAuthStore();
+  
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
+
   const [complaint, setComplaint] = useState({
     location: "",
     description: "",
     file: null,
   });
+
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
   const [loading, setLoading] = useState(false);
   const [geoError, setGeoError] = useState("");
@@ -65,6 +72,10 @@ useEffect(() => {
     e.preventDefault();
     if (!complaint.file) {
       alert("❌ Please upload an image or video.");
+      return;
+    }
+    if(!user) {
+      alert("Please Login to register Complaint");
       return;
     }
     setLoading(true);

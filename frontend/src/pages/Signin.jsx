@@ -1,29 +1,34 @@
-
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext"; // Ensure correct import
 import { useNavigate } from "react-router-dom";
-import { FaEyeSlash,FaEye } from "react-icons/fa";
+import useAuthStore from "../store/authStore";
 import "./Signin.css";
 
 const Signin = () => {
-  const { login } = useAuth(); // Get login function from AuthContext
+  const { login } = useAuthStore(); // Zustand login action
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user"); // Default role: user
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
-  // Handling form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, role);
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (role === "municipal") {
-      navigate("/municipal-dashboard");
-    } else if (role === "ngo") {
-      navigate("/ngo-dashboard");
-    } else {
-      navigate("/");
+      if (!res.ok) throw new Error("Invalid credentials");
+
+      const { token, user } = await res.json();
+      login(user, token); // Save user and token in Zustand store
+
+      // Redirect based on role
+      if (user.role === "municipal") navigate("/municipal-dashboard");
+      else if (user.role === "ngo") navigate("/ngo-dashboard");
+      else navigate("/");
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -39,39 +44,19 @@ const Signin = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <div className="password-field">
-            <input
-              type={showPassword ? "text" : "password"} 
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />} 
-            </button>
-          </div>
-
-          {/* Role Selection */}
-
-          <label>Select Role:</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="user">Regular User</option>
-            <option value="municipal">Municipal Authority</option>
-            <option value="ngo">NGO Representative</option>
-          </select>
-
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <button type="submit" className="auth-btn">Sign In</button>
         </form>
       </div>
     </div>
   );
 };
-
 
 export default Signin;
 

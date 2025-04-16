@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const Complaint = require("../models/Complaint");
-
+const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Ensure uploads folder exists
@@ -34,10 +34,10 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 
 // Serve Uploaded Files
-router.use("/uploads", express.static(uploadDir));
+router.use("/uploads",protect,express.static(uploadDir));
 
 // Register Complaint endpoint (POST /register)
-router.post("/register", upload.single("file"), async (req, res) => {
+router.post("/register",protect,upload.single("file"), async (req, res) => {
   try {
     // Destructure new fields from the request body, including coordinates.
     const { location, description, user, coordinates } = req.body;
