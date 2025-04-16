@@ -1,75 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import useAuthStore from "../store/authStore";
 import "./Navbar.css";
-import { useAuth } from "../context/AuthContext"; // ✅ Correct import
+import { FaUser } from "react-icons/fa";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, login } = useAuth(); // ✅ Using the hook
+  const { user, logout } = useAuthStore(); // Zustand actions
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.reload(); // simple reload for logout
+    logout();
+    navigate("/signin");
   };
 
   return (
     <nav className="navbar">
       <div className="nav-container">
-
-        <Link to={"/"} className="logo">💧 WaterSave</Link>
-
-
-        <div className={`nav-links ${isOpen ? "open" : ""}`}>
+        <Link to="/" className="logo">💧 WaterSave</Link>
+        <div className="nav-links">
           <Link to="/">Home</Link>
+          {
+            user && user.role === "municipal" ? (
+              <Link to="/municipal-dashboard">Municipal Dashboard</Link>
+            ) : user && user?.role === "ngo" ? (
+              <Link to="/ngo-dashboard">NGO Dashboard</Link>
+            ) : null
+          }
           <Link to="/techniques">Conservation Techniques</Link>
           <Link to="/register-complaint">Report Complaint</Link>
-
-          <Link to="/subsidy">Subsidy</Link>  
-          <Link to="/contact">Contact</Link>
+          <Link to="/subsidy">Subsidy</Link>
         </div>
-
         <div className="auth-buttons">
           {user ? (
-            <div className="profile-container">
-              <img
-                src="/src/assets/images/profile-icon.png"
-                alt="Profile"
-                className="profile-icon"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              />
-              {dropdownOpen && (
-                <div className="dropdown-menu">
-                  <button onClick={() => navigate("/profile")}>Profile</button>
-                  <button onClick={handleLogout}>Logout</button>
-                </div>
-              )}
+            <div>
+              <div className="btn-logout">
+                <span><FaUser /></span>
+              </div>
+              <button onClick={handleLogout} className="btn-logout">Logout</button>
             </div>
           ) : (
             <>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link to="/signin" className="btn-login">
-                  Sign In
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link to="/signup" className="btn-signup">
-                  Sign Up
-                </Link>
-              </motion.div>
+              <Link to="/signin" className="btn-login">Sign In</Link>
+              <Link to="/signup" className="btn-signup">Sign Up</Link>
             </>
           )}
         </div>
-
-        <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>☰</button>
       </div>
     </nav>
   );

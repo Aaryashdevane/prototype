@@ -1,36 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home.jsx";
 import Signin from "./pages/Signin.jsx";
-import Signup from "./pages/Signup.jsx"
+import Signup from "./pages/Signup.jsx";
 import RegisterComplaint from "./pages/RegisterComplaint.jsx";
 import ConservationTechniques from "./pages/ConservationTechniques.jsx";
 import SocialPosts from "./components/SocialPosts.jsx";
 import GovernmentSchemes from "./components/GovermentSchemes.jsx";
 import MunicipalDashboard from "./pages/MunicipalDashboard.jsx";
-import ProtectedRoute from "./pages/ProtectedRoute.jsx";
+import ProtectedRoute from "./pages/ProtectedRoute";
 import NgoDashboard from "./pages/NgoDashboard.jsx";
 import SubsidyPage from "./pages/Subsidy.jsx";
 import Footer from "./components/Footer.jsx";
 import Chatbot from "./components/ChatBot.jsx";
 import InstaPosts from "./components/InstaPosts.jsx";
 import TwitterPosts from "./components/TwitterPosts.jsx";
+import useAuthStore from "./store/authStore";
 
 const App = () => {
+  const loadUser = useAuthStore((state) => state.loadUser);
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
+
   return (
     <>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={ !user ? <Signin/> : <Home/>} />
+        <Route path="/signup" element={ !user ? <Signup /> : <Home/>} />
         <Route path="/register-complaint" element={<RegisterComplaint />} />
         <Route path="/techniques" element={<ConservationTechniques />}>
-          {/* Redirect default /techniques to /techniques/social/twitter */}
           <Route index element={<Navigate to="/techniques/social/twitter" replace />} />
           <Route path="/techniques/social" element={<SocialPosts />}>
-            {/* Redirect default /techniques/social to /techniques/social/twitter */}
             <Route index element={<Navigate to="/techniques/social/twitter" replace />} />
             <Route path="insta" element={<InstaPosts />} />
             <Route path="twitter" element={<TwitterPosts />} />
@@ -39,31 +45,23 @@ const App = () => {
         </Route>
         <Route path="/subsidy" element={<SubsidyPage />} />
 
-        {/* Municipal Dashboard - Protected */}
+        {/* Protected Routes */}
         <Route
           path="/municipal-dashboard"
           element={
-            <ProtectedRoute roleRequired="municipal">
-              <MunicipalDashboard />
-            </ProtectedRoute>
+            user && user.role==="municipal" && <MunicipalDashboard />
           }
         />
-
-        {/* NGO Dashboard - Protected */}
         <Route
           path="/ngo-dashboard"
           element={
-            <ProtectedRoute roleRequired="ngo">
-              <NgoDashboard />
-            </ProtectedRoute>
+            user && user.role==="ngo" && <NgoDashboard />
+            
           }
         />
 
-        {/* Chatbot Route */}
         <Route path="/chatbot" element={<Chatbot />} />
       </Routes>
-
-      {/* Footer */}
       <Footer />
     </>
   );

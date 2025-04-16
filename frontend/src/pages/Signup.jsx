@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import useAuthStore from "../store/authStore";
 import { FaEyeSlash,FaEye } from "react-icons/fa";
 import "./Signup.css";
 
@@ -8,7 +8,7 @@ import stateData from "../states-and-districts.json";
 
 
 const SignupUser = () => {
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -96,7 +96,6 @@ const SignupUser = () => {
 
     const data = await res.json();
     if (res.ok) {
-      login(formData.role);
       navigate("/signin");
     } else {
       alert(data.message || "Registration failed");
