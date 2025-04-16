@@ -65,9 +65,20 @@ async def process_image(
     file: UploadFile = File(...),
     location: str = Form(...),
     user: str = Form(...),
-    coordinates: str = Form(...)
+    coordinates: str = Form(...),
+    nearestDistrictCoordinates: str = Form(None)
 ):
     try:
+        print("📥 Incoming Data:")
+        print(f"Location: {location}")
+        print(f"User: {user}")
+        print(f"Coordinates: {coordinates}")
+        print(f"File: {file.filename}")
+        print(f"Nearest District Coordinates: {nearestDistrictCoordinates}")
+
+        # Parse nearestDistrictCoordinates as an object
+        nearest_district_coords = json.loads(nearestDistrictCoordinates) if nearestDistrictCoordinates else None
+
         cloudinary_response = cloudinary.uploader.upload(file.file)
         image_url = cloudinary_response.get("secure_url")
 
@@ -90,11 +101,13 @@ async def process_image(
             "image_url": image_url,
             "status": "Pending",
             "user": user,
-            "coordinates": coordinates
+            "coordinates": json.loads(coordinates),
+            "nearestDistrictCoordinates": nearest_district_coords
         }
 
         inserted_id = collection.insert_one(complaint_data).inserted_id
         return {"message": "Submitted!", "id": str(inserted_id), "description": description, "category": category, "image_url": image_url, "coordinates": coordinates}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 

@@ -7,26 +7,32 @@ const MunicipalDashboard = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
-  const [officerLocation, setOfficerLocation] = useState([18.5204, 73.8567]);
-
+  const { municipalCoordinates } = JSON.parse(localStorage.getItem("user")) || {};
+  
   useEffect(() => {
     fetchComplaints();
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setOfficerLocation([position.coords.latitude, position.coords.longitude]);
-        },
-        (error) => console.warn("Unable to fetch officer location, using default.", error)
-      );
-    }
   }, []);
 
   const fetchComplaints = async () => {
     try {
-      const res = await fetch("http://localhost:8000/complaints/");
+      // Get the municipal user's coordinates from localStorage or auth store
+  
+      if (!municipalCoordinates) {
+        console.error("Municipal coordinates not found for the logged-in user");
+        setComplaints([]);
+        setLoading(false);
+        return;
+      }
+  
+      const res = await fetch("http://localhost:5000/api/complaints/fetch-complaints", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ municipalCoordinates: JSON.stringify(municipalCoordinates) }),
+      });
+
       if (!res.ok) throw new Error("Failed to fetch complaints");
       const data = await res.json();
+      console.log("data:",data);
       setComplaints(data.complaints || []);
     } catch (error) {
       console.error("Error fetching complaints:", error);
@@ -87,9 +93,9 @@ const MunicipalDashboard = () => {
                 // Handle coordinates object format
                 if (complaint.coordinates) {
                   try {
-                    const coordObject = JSON.parse(complaint.coordinates);
-                    if (coordObject.lat && coordObject.lon) {
-                      coords = [coordObject.lat, coordObject.lon];
+                    const coords = JSON.parse(complaint.coordinates); // Parse as an array
+                    if (Array.isArray(coords) && coords.length === 2 && !coords.some(isNaN)) {
+                      coords = [parseFloat(coords[0]), parseFloat(coords[1])];
                       console.log("Parsed coordinates:", coords);
                     } else {
                       console.warn("Invalid coordinates structure in complaint.coordinates");
@@ -158,13 +164,16 @@ const MunicipalDashboard = () => {
 
           {selectedComplaint && selectedComplaint.parsedCoords && (
             <DirectionPopup
-              from={officerLocation}
+              from={[parseFloat(municipalCoordinates.lat), parseFloat(municipalCoordinates.lon)]}
               to={selectedComplaint.parsedCoords}
               onClose={() => setSelectedComplaint(null)}
             />
           )}
         </div>
       )}
+      {console.log("Municipal Coordinates:", municipalCoordinates)}
+      {console.log("Selected Complaint:", selectedComplaint)}
+      {console.log("Parsed Coordinates for Directions:", selectedComplaint?.parsedCoords)}
     </div>
   );
 };

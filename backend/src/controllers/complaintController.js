@@ -30,4 +30,27 @@ const getComplaints = async (req, res) => {
   }
 };
 
-module.exports = { registerComplaint, getComplaints };
+const getAllComplaints = async (req, res) => {
+  try {
+    const { municipalCoordinates } = req.body;
+    if (!municipalCoordinates) {
+      return res.status(400).json({ error: "Municipal coordinates are required" });
+    }
+
+    const parsedCoordinates = JSON.parse(municipalCoordinates);
+    parsedCoordinates.lat = parseFloat(parsedCoordinates.lat);
+    parsedCoordinates.lon = parseFloat(parsedCoordinates.lon);
+    console.log("Printing",parsedCoordinates);
+    // Find complaints where nearestDistrictCoordinates match municipalCoordinates
+    const complaints = await Complaint.find({
+      "nearestDistrictCoordinates.lat": parsedCoordinates.lat,
+      "nearestDistrictCoordinates.lon": parsedCoordinates.lon,
+    });
+    res.json({ message:"Success",ok:true, complaints:complaints });
+  } catch (error) {
+    console.error("Error fetching complaints:", error);
+    res.status(500).json({ error: "Failed to fetch complaints" });
+  }
+};
+
+module.exports = { registerComplaint, getComplaints,getAllComplaints };

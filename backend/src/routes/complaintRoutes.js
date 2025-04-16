@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const Complaint = require("../models/Complaint");
 const { protect } = require("../middleware/authMiddleware");
+const { getAllComplaints } = require("../controllers/complaintController");
 const router = express.Router();
 
 // Ensure uploads folder exists
@@ -70,5 +71,5 @@ router.post("/register",protect,upload.single("file"), async (req, res) => {
 });
 
 // Other endpoints (get complaints, update status, etc.) remain unchanged.
-
+router.post("/fetch-complaints",getAllComplaints);
 module.exports = router;

@@ -1,11 +1,32 @@
 import React, { useState, useEffect } from "react";
+import { findNearest } from "geolib";
 import useAuthStore from "../store/authStore";
+import districtCoordinates from "../lib/districts"; // Import district coordinates
 import "./ComplaintForm.css";
+
+const getNearestDistrict = (lat, lon) => {
+  const nearest = findNearest(
+    { latitude: lat, longitude: lon },
+    districtCoordinates.map((district) => ({
+      latitude: district.lat,
+      longitude: district.lon,
+      district: district.district,
+    }))
+  );
+
+  const nearestDistrict = districtCoordinates.find(
+    (district) => district.lat === nearest.latitude && district.lon === nearest.longitude
+  );
+
+  return nearestDistrict
+    ? { district: nearestDistrict.district, coordinates: { lat: nearestDistrict.lat, lon: nearestDistrict.lon } }
+    : { district: "Unknown", coordinates: null };
+};
 
 const ComplaintForm = () => {
   const loadUser = useAuthStore((state) => state.loadUser);
   const { user } = useAuthStore();
-  
+
   useEffect(() => {
     loadUser();
   }, [loadUser]);
@@ -14,51 +35,39 @@ const ComplaintForm = () => {
     location: "",
     description: "",
     file: null,
+    state: "",
+    district: "",
+    nearestDistrictCoordinates: null,
   });
 
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
   const [loading, setLoading] = useState(false);
   const [geoError, setGeoError] = useState("");
 
-  // Reverse geocoding to fetch human-readable address using Nominatim
-  const fetchAddress = async (lat, lon) => {
-    try {
-      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&zoom=18&email=your-email@example.com`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Reverse geocoding failed");
-      const data = await res.json();
-      return data.display_name || "";
-    } catch (error) {
-      console.error("Error in reverse geocoding:", error);
-      return "";
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          setCoordinates({ lat, lon });
+
+          // Get the nearest district and its coordinates
+          const { district, coordinates } = getNearestDistrict(lat, lon);
+          setComplaint((prev) => ({
+            ...prev,
+            location: `${lat}, ${lon}`,
+            district,
+            nearestDistrictCoordinates: coordinates, // Store the nearest district's coordinates
+          }));
+        },
+        (error) => {
+          console.error("Error fetching location:", error);
+          setGeoError("Unable to fetch location. Please try again.");
+        }
+      );
     }
-  };
-
-  // Request user's location and then fetch the corresponding address
-  // In ComplaintForm.jsx
-useEffect(() => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        setCoordinates({ lat, lon });
-        // Call your reverse geocoding (as before) to get the full address
-        const address = await fetchAddress(lat, lon);
-        setComplaint((prev) => ({
-          ...prev,
-          location: address || `${lat}, ${lon}`,
-        }));
-      },
-      (error) => { /* handle error */ }
-    );
-  }
-}, []);
-
-
-  // useEffect(() => {
-  //   fetchLocation();
-  // }, []);
+  }, []);
 
   const handleFileChange = (e) => {
     setComplaint({ ...complaint, file: e.target.files[0] });
@@ -74,20 +83,27 @@ useEffect(() => {
       alert("❌ Please upload an image or video.");
       return;
     }
-    if(!user) {
+    if (!user) {
       alert("Please Login to register Complaint");
       return;
     }
     setLoading(true);
 
-    // Prepare form data with human-readable address and raw coordinates.
     const formData = new FormData();
     formData.append("location", complaint.location);
     formData.append("description", complaint.description);
     formData.append("file", complaint.file);
+    formData.append("district", complaint.district);
     formData.append("user", user?.email);
-    // Send coordinates as a JSON string (or you could use separate fields)
     formData.append("coordinates", JSON.stringify(coordinates));
+
+    // Append nearest district coordinates as an object
+    if (complaint.nearestDistrictCoordinates) {
+      formData.append(
+        "nearestDistrictCoordinates",
+        JSON.stringify(complaint.nearestDistrictCoordinates)
+      );
+    }
 
     try {
       const response = await fetch("http://localhost:8000/process-image/", {
@@ -98,8 +114,7 @@ useEffect(() => {
       if (response.ok) {
         const data = await response.json();
         alert(`✅ Complaint submitted!\nCategory: ${data.category}`);
-        // Reset while keeping the auto-populated location
-        setComplaint({ location: complaint.location, description: "", file: null });
+        setComplaint({ location: complaint.location, description: "", file: null, district: "" });
       } else {
         alert("❌ Failed to submit complaint.");
       }
@@ -132,12 +147,12 @@ useEffect(() => {
           required
         />
 
+        <label>Nearest District:</label>
+        <input type="text" name="district" value={complaint.district} readOnly />
+
         {geoError && (
           <div className="geo-error">
             <p>{geoError}</p>
-            <button type="button" onClick={fetchLocation}>
-              Try Again
-            </button>
           </div>
         )}
 

@@ -8,8 +8,12 @@ const UserSchema = new mongoose.Schema(
     mobile: { type: String, required: true },
     address: { type: String },
     role: { type: String, enum: ["user", "municipal", "ngo"], default: "user" },
-    state: { type: String },     // 👈 Added
-    district: { type: String },  // 👈 Added
+    state: { type: String },
+    district: { type: String },
+    municipalCoordinates: { // Add municipalCoordinates field
+      lat: { type: Number },
+      lon: { type: Number },
+    },
   },
   { timestamps: true }
 );

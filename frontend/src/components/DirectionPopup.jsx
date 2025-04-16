@@ -3,24 +3,48 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet/dist/leaflet.css";
+import "./DirectionPopup.css"; // Add a CSS file for custom styling
 
 const Routing = ({ from, to }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!from || !to || isNaN(from[0]) || isNaN(to[0])) return;
+    console.log("Routing from:", from, "to:", to);
+
+    // Validate the map and coordinates
+    if (!map) {
+      console.error("Map is not initialized yet.");
+      return;
+    }
+
+    if (!from || !to || from.length !== 2 || to.length !== 2 || isNaN(from[0]) || isNaN(to[0])) {
+      console.error("Invalid coordinates for routing:", { from, to });
+      return;
+    }
+
+    // Add routing control to the map
     const routingControl = L.Routing.control({
       waypoints: [L.latLng(from[0], from[1]), L.latLng(to[0], to[1])],
       routeWhileDragging: false,
       show: false,
       addWaypoints: false,
       draggableWaypoints: false,
-      createMarker: () => null,
-      // Optionally, you can set the serviceUrl here if you plan to use your own routing server.
-      // serviceUrl: "https://your.routing.server/route/v1"
+      createMarker: (i, waypoint) => {
+        return L.marker(waypoint.latLng, {
+          icon: L.icon({
+            iconUrl: i === 0 ? "https://cdn-icons-png.flaticon.com/512/684/684908.png" : "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+            iconSize: [30, 30],
+          }),
+        });
+      },
     }).addTo(map);
 
-    return () => map.removeControl(routingControl);
+    // Cleanup the routing control when the component unmounts
+    return () => {
+      if (map && routingControl) {
+        map.removeControl(routingControl);
+      }
+    };
   }, [from, to, map]);
 
   return null;
@@ -28,32 +52,18 @@ const Routing = ({ from, to }) => {
 
 const DirectionPopup = ({ from, to, onClose }) => {
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "10%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        zIndex: 1000,
-        background: "white",
-        padding: "1rem",
-        borderRadius: "10px",
-        width: "80%",
-        maxWidth: "700px",
-        boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div className="direction-popup">
+      <div className="direction-popup-header">
         <h3>Directions</h3>
-        <button onClick={onClose} style={{ fontSize: "18px" }}>
+        <button onClick={onClose} className="close-button">
           ✖
         </button>
       </div>
-      <div style={{ height: "400px", marginTop: "10px" }}>
+      <div className="direction-popup-map">
         <MapContainer center={from} zoom={13} style={{ height: "100%", width: "100%" }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; OpenStreetMap contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           <Routing from={from} to={to} />
         </MapContainer>

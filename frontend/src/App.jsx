@@ -9,7 +9,6 @@ import ConservationTechniques from "./pages/ConservationTechniques.jsx";
 import SocialPosts from "./components/SocialPosts.jsx";
 import GovernmentSchemes from "./components/GovermentSchemes.jsx";
 import MunicipalDashboard from "./pages/MunicipalDashboard.jsx";
-import ProtectedRoute from "./pages/ProtectedRoute";
 import NgoDashboard from "./pages/NgoDashboard.jsx";
 import SubsidyPage from "./pages/Subsidy.jsx";
 import Footer from "./components/Footer.jsx";
@@ -26,6 +25,7 @@ const App = () => {
     loadUser();
   }, [loadUser]);
 
+  console.log("User",user);
   return (
     <>
       <Navbar />

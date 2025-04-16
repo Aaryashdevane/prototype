@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
-import { FaEyeSlash,FaEye } from "react-icons/fa";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 import "./Signup.css";
 
 import stateData from "../states-and-districts.json";
-
+import districtCoordinates from "../lib/districts"; // Import district coordinates
 
 const SignupUser = () => {
   const { login } = useAuthStore();
@@ -16,27 +16,25 @@ const SignupUser = () => {
     password: "",
     confirmPassword: "",
     mobile: "",
-    address: "",
     aadhaar: "",
+    address: "",
     pincode: "",
     state: "",
     district: "",
     role: "user",
+    municipalCoordinates: null, // Add municipalCoordinates to formData
   });
-
-
 
   const [agreeToPolicy, setAgreeToPolicy] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [districts, setDistricts] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   // Extract states from the JSON data
   const states = stateData.states.map((stateObj) => stateObj.state);
 
-
   useEffect(() => {
-
     if (formData.state) {
       const selectedStateObj = stateData.states.find(
         (s) => s.state === formData.state
@@ -46,7 +44,6 @@ const SignupUser = () => {
     } else {
       setDistricts([]);
     }
-
   }, [formData.state]);
 
   const handleChange = (e) => {
@@ -59,15 +56,21 @@ const SignupUser = () => {
     }
   };
 
-
-  const handleStateChange = (e) => {
-    const state = e.target.value;
-    setFormData((prev) => ({ ...prev, state, district: "" }));
-  };
-
   const handleDistrictChange = (e) => {
     const district = e.target.value;
-    setFormData((prev) => ({ ...prev, district }));
+
+    // Find the coordinates for the selected district
+    const selectedDistrict = districtCoordinates.find(
+      (d) => d.district === district
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      district,
+      municipalCoordinates: selectedDistrict
+        ? { lat: selectedDistrict.lat, lon: selectedDistrict.lon }
+        : null, // Set municipalCoordinates if found
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -86,12 +89,10 @@ const SignupUser = () => {
     const res = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-
       body: JSON.stringify({
         ...formData,
-        confirmPassword: undefined,
+        confirmPassword: undefined, // Remove confirmPassword from the payload
       }),
-
     });
 
     const data = await res.json();
@@ -102,12 +103,12 @@ const SignupUser = () => {
     }
   };
 
+  // console.log("Form data:", formData);
   return (
     <div className="auth-page">
       <div className="auth-container">
         <h2>User Sign Up</h2>
         <form onSubmit={handleSubmit}>
-
           <input
             type="text"
             name="name"
@@ -138,8 +139,7 @@ const SignupUser = () => {
               className="toggle-password"
               onClick={() => setShowPassword((prev) => !prev)}
             >
-              {showPassword ? <FaEye /> : <FaEyeSlash />
-              } 
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
             </button>
           </div>
           <div className="password-field">
@@ -156,7 +156,7 @@ const SignupUser = () => {
               className="toggle-password"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
             >
-              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />} {/* Emoji for eye toggle */}
+              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
             </button>
           </div>
           {passwordError && <div className="error-message">{passwordError}</div>}
@@ -169,62 +169,85 @@ const SignupUser = () => {
             onChange={handleChange}
             required
           />
-          <input
-            type="text"
-            name="aadhaar"
-            placeholder="Aadhaar Card Number"
-            value={formData.aadhaar}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="address"
-            placeholder="Full Address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-          />
-          <div className="address-details">
-            <input
-              type="text"
-              name="pincode"
-              placeholder="Pin Code"
-              value={formData.pincode}
-              onChange={handleChange}
-              required
-            />
 
+          {/* Conditional Rendering Based on Role */}
+          {formData.role === "municipal" ? (
             <div className="dropdown-group">
-              <select
-                name="state"
-                value={formData.state}
-                onChange={handleStateChange}
-                required
-              >
-                <option value="">Select State</option>
-                {states.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-
+              <label>Select District:</label>
               <select
                 name="district"
                 value={formData.district}
                 onChange={handleDistrictChange}
-                disabled={!formData.state}
                 required
               >
                 <option value="">Select District</option>
-                {districts.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
+                {districtCoordinates.map((district) => (
+                  <option key={district.district} value={district.district}>
+                    {district.district}
                   </option>
                 ))}
               </select>
             </div>
-          </div>
+          ) : (
+            <>
+              <input
+                type="text"
+                name="aadhaar"
+                placeholder="Aadhaar Card Number"
+                value={formData.aadhaar}
+                onChange={handleChange}
+                required
+              />
+              <textarea
+                name="address"
+                placeholder="Full Address"
+                value={formData.address}
+                onChange={handleChange}
+                required
+              />
+              <div className="address-details">
+                <input
+                  type="text"
+                  name="pincode"
+                  placeholder="Pin Code"
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  required
+                />
+
+                <div className="dropdown-group">
+                  <select
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select State</option>
+                    {states.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    name="district"
+                    value={formData.district}
+                    onChange={handleDistrictChange}
+                    disabled={!formData.state}
+                    required
+                  >
+                    <option value="">Select District</option>
+                    {districts.map((district) => (
+                      <option key={district} value={district}>
+                        {district}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="role-select">
             <label>Select Role:</label>
@@ -246,10 +269,11 @@ const SignupUser = () => {
             <label htmlFor="policy">
               I accept the terms and agree to use this data accordingly.
             </label>
-
           </div>
 
-          <button type="submit" className="auth-btn">Register</button>
+          <button type="submit" className="auth-btn">
+            Register
+          </button>
         </form>
       </div>
     </div>
